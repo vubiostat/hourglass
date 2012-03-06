@@ -4,6 +4,7 @@ require 'sinatra/base'
 require 'swt'
 require 'sequel'
 require 'sequel/extensions/migration'
+require 'logger'
 
 module Hourglass
   def self.environment

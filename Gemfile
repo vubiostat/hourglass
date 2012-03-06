@@ -4,6 +4,7 @@ gem "sinatra"
 gem "swt"
 gem "sequel"
 gem "jdbc-h2"
+gem "mongrel"
 
 group :development do
   gem "rdoc", "~> 3.12"

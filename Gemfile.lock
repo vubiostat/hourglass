@@ -2,6 +2,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     ffi (1.0.11-java)
+    gem_plugin (0.2.3)
     git (1.2.5)
     guard (1.0.0)
       ffi (>= 0.5.0)
@@ -19,6 +20,8 @@ GEM
     metaclass (0.0.1)
     mocha (0.10.5)
       metaclass (~> 0.0.1)
+    mongrel (1.1.5-java)
+      gem_plugin (>= 0.2.3)
     rack (1.4.1)
     rack-protection (1.2.0)
       rack
@@ -46,6 +49,7 @@ DEPENDENCIES
   jdbc-h2
   jeweler (~> 1.8.3)
   mocha
+  mongrel
   rack-test
   rdoc (~> 3.12)
   sequel

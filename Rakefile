@@ -32,14 +32,6 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-  test.rcov_opts << '--exclude "gems/*"'
-end
-
 task :default => :test
 
 require 'rdoc/task'
@@ -50,4 +42,60 @@ Rake::RDocTask.new do |rdoc|
   rdoc.title = "hourglass #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
+end
+
+task :environment do
+  ENV['HOURGLASS_HOME'] = File.expand_path(File.join(File.dirname(__FILE__)))
+  require File.join(File.dirname(__FILE__), 'lib', 'hourglass')
+end
+
+namespace :environment do
+  task :test do
+    ENV['HOURGLASS_ENV'] = "test"
+    Rake::Task["environment"].execute
+  end
+
+  task :development do
+    ENV['HOURGLASS_ENV'] = "development"
+    Rake::Task["environment"].execute
+  end
+end
+
+namespace :db do
+  desc "Obliterate the local database"
+  task :nuke => :environment do
+    confirm("This will delete all of Hourglass's databases.")
+
+    require 'fileutils'
+    files = Dir.glob(File.join(Hourglass.data_path, "db", "**", "*.db"))
+    FileUtils.rm_rf(files, :verbose => true)
+  end
+
+  desc "Purge the database"
+  task :purge => :environment do
+    FileUtils.rm(Dir[Hourglass.db_path+".*"])
+  end
+
+  desc "Run migrations"
+  task :migrate => :environment do
+    version = ENV['VERSION']
+    Hourglass::Database.migrate!(version ? version.to_i : nil)
+  end
+
+  namespace :migrate do
+    desc "Reset the database"
+    task :reset => ['db:purge', 'db:migrate']
+  end
+
+  desc "Roll the database back a version"
+  task :rollback => [:start, :environment] do
+    Hourglass::Database.rollback!
+  end
+end
+
+desc "Run Hourglass from the project directory"
+task :run do
+  ENV['HOURGLASS_ENV'] = 'development'
+  ENV['HOURGLASS_HOME'] = File.expand_path(File.join(File.dirname(__FILE__)))
+  load File.join(File.dirname(__FILE__), 'bin', 'hourglass')
 end

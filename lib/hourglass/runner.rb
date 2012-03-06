@@ -1,6 +1,7 @@
 module Hourglass
   class Runner
     def initialize
+      Database.migrate!
       if start_server
         start_browser
       end

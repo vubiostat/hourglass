@@ -13,7 +13,7 @@ module Hourglass
         args << to
         args << from  if from
       end
-      Sequel::Migrator.apply(*args)
+      Sequel::Migrator.run(*args)
     end
   end
 end

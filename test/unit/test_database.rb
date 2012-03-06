@@ -15,7 +15,7 @@ class TestDatabase < Test::Unit::TestCase
 
   test "migrate" do
     dir = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "db", "migrate"))
-    Sequel::Migrator.expects(:apply).with(@database, dir)
+    Sequel::Migrator.expects(:run).with(@database, dir)
     @database.migrate!
   end
 end
