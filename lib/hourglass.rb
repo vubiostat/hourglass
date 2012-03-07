@@ -1,5 +1,6 @@
 require 'pathname'
 require 'rbconfig'
+require 'delegate'
 require 'sinatra/base'
 require 'swt'
 require 'sequel'

@@ -84,35 +84,6 @@
 <div class="right">
   <button id="add-earlier-activity">Add earlier activity</button>
 </div>
-<div id="activity-dialog" style="display: none;">
-  <form>
-    <input class="activity-id" type="hidden" value="" />
-    <table>
-      <tbody>
-        <tr>
-          <td>Time:</td>
-          <td>
-            <input class="activity-start-date" type="text" name="start-date" size="10" />
-            <input class="activity-start-time" type="text" name="start-time" size="5" />
-            to
-            <input class="activity-end-time" type="text" name="end-time" size="5" disabled="disabled" />
-            <span class="activity-end-date"></span>
-            <input id="in-progress-checkbox" class="activity-in-progress" type="checkbox" name="running" value="true" checked="checked" />
-            <label for="in-progress-checkbox">in progress</label>
-          </td>
-        </tr>
-        <tr>
-          <td>Activity:</td>
-          <td><input class="activity-name" type="text" name="activity" /></td>
-        </tr>
-        <tr>
-          <td>Tags:</td>
-          <td><input class="activity-tags" type="text" name="tags" /></td>
-        </tr>
-      </tbody>
-    </table>
-  </form>
-</div>
 
 <script type="text/javascript">
   $(function() {
@@ -144,5 +115,30 @@
         obj.addClass('empty');
       }
     }).blur();
+  });
+
+  $('#activity-dialog').dialog({
+    autoOpen: false,
+    width: 'auto',
+    title: 'Add earlier activity',
+    buttons: {
+      "Cancel": function() {
+        $(this).dialog('close');
+      },
+      "Save": function() {
+        $(this).find('form').submit();
+      }
+    }
+  }).find('form').submit(function(e) {
+    e.preventDefault();
+    f.parent().dialog('close');
+  }).find('input').keydown(function(e) {
+    if (e.keyCode == 13) {
+      $(this).closest('form').submit();
+    }
+  });
+
+  $('#add-earlier-activity').click(function(e) {
+    window.open("/activities/new", '_blank');
   });
 </script>

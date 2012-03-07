@@ -1,0 +1,35 @@
+<div style="outline-width: 0px; outline-style: initial; outline-color: initial; height: auto; width: auto; position: relative; display: block;" class="ui-dialog ui-widget ui-widget-content ui-corner-all" tabindex="-1" role="dialog" aria-labelledby="ui-dialog-title-activity-form"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><span class="ui-dialog-title" id="ui-dialog-title-activity-form">Add earlier activity</span><a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button"><span class="ui-icon ui-icon-closethick">close</span></a></div>
+<div id="activity-form" class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 132px; height: auto; " scrolltop="0" scrollleft="0">
+  <form>
+    <input class="activity-id" type="hidden" value="">
+    <table>
+      <tbody>
+        <tr>
+          <td>Time:</td>
+          <td>
+            <input class="activity-start-date" type="text" name="start-date" size="10">
+            <input class="activity-start-time" type="text" name="start-time" size="5">
+            to
+            <input class="activity-end-time" type="text" name="end-time" size="5" disabled="disabled">
+            <span class="activity-end-date"></span>
+            <input id="in-progress-checkbox" class="activity-in-progress" type="checkbox" name="running" value="true" checked="checked">
+            <label for="in-progress-checkbox">in progress</label>
+          </td>
+        </tr>
+        <tr>
+          <td>Activity:</td>
+          <td><input class="activity-name" type="text" name="activity"></td>
+        </tr>
+        <tr>
+          <td>Tags:</td>
+          <td><input class="activity-tags" type="text" name="tags"></td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>
+<script type="text/javascript">
+  $(function() {
+    $('a.ui-dialog-titlebar-close').click(function() { window.close(); });
+  });
+</script>

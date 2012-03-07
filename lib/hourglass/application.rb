@@ -7,5 +7,10 @@ module Hourglass
       @activities = Activity.filter(:started_at > Date.today).all
       erb :index
     end
+
+    get '/activities/new' do
+      @activity = Activity.new
+      erb :form
+    end
   end
 end

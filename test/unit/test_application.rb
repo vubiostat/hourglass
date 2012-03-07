@@ -11,4 +11,9 @@ class TestApplication < Test::Unit::TestCase
     get "/"
     assert last_response.ok?
   end
+
+  test "new activity" do
+    get "/activities/new"
+    assert last_response.ok?
+  end
 end
