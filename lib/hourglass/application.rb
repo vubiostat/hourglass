@@ -1,7 +1,11 @@
 module Hourglass
   class Application < Sinatra::Base
+    set :root, Hourglass.root
+    set :erb, :trim => '-'
+
     get '/' do
-      "HEY!"
+      @activities = Activity.filter(:started_at > Date.today).all
+      erb :index
     end
   end
 end

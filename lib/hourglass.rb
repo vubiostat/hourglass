@@ -7,6 +7,10 @@ require 'sequel/extensions/migration'
 require 'logger'
 
 module Hourglass
+  def self.root
+    File.expand_path(File.join(File.dirname(__FILE__), '..'))
+  end
+
   def self.environment
     @environment ||= ENV['HOURGLASS_ENV'] || :production
   end
@@ -51,5 +55,8 @@ end
 
 path = Pathname.new(File.dirname(__FILE__)) + "hourglass"
 require path + 'database'
+require path + 'project'
+require path + 'activity'
+require path + 'setting'
 require path + 'application'
 require path + 'runner'

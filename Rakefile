@@ -45,6 +45,7 @@ Rake::RDocTask.new do |rdoc|
 end
 
 task :environment do
+  ENV['HOURGLASS_ENV'] ||= 'development'
   ENV['HOURGLASS_HOME'] = File.expand_path(File.join(File.dirname(__FILE__)))
   require File.join(File.dirname(__FILE__), 'lib', 'hourglass')
 end
@@ -52,11 +53,6 @@ end
 namespace :environment do
   task :test do
     ENV['HOURGLASS_ENV'] = "test"
-    Rake::Task["environment"].execute
-  end
-
-  task :development do
-    ENV['HOURGLASS_ENV'] = "development"
     Rake::Task["environment"].execute
   end
 end
@@ -95,7 +91,7 @@ end
 
 desc "Run Hourglass from the project directory"
 task :run do
-  ENV['HOURGLASS_ENV'] = 'development'
+  ENV['HOURGLASS_ENV'] ||= 'development'
   ENV['HOURGLASS_HOME'] = File.expand_path(File.join(File.dirname(__FILE__)))
   load File.join(File.dirname(__FILE__), 'bin', 'hourglass')
 end
