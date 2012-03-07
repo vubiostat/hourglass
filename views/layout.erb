@@ -4,6 +4,7 @@
   <title>Hourglass</title>
   <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
   <script type="text/javascript" src="/js/jquery-ui-1.8.18.custom.min.js"></script>
+  <link type="text/css" rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
 
@@ -15,7 +16,7 @@
 -%>
 <script type="text/javascript">
   $(function() {
-    $('head').append('<link type="text/css" rel="stylesheet" href="/css/<%= theme %>/jquery-ui.css" />');
+    $('head').prepend('<link type="text/css" rel="stylesheet" href="/css/<%= theme %>/jquery-ui.css" />');
   });
 </script>
 

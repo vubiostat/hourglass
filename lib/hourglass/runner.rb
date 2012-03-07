@@ -26,7 +26,8 @@ module Hourglass
     def start_browser
       display = Swt::Widgets::Display.new
       shell = Swt::Widgets::Shell.new(display)
-      shell.text = "Browser"
+      shell.text = "Hourglass"
+      shell.set_size(500, 300)
       layout = Swt::Layout::FillLayout.new
       shell.layout = layout
       browser = Swt::Browser.new(shell, Swt::SWT::WEBKIT)

@@ -1,0 +1,144 @@
+body {
+  font-family: georgia;
+  font-size: 16px;
+}
+
+#current-activity {
+  position: relative;
+  padding-bottom: 1em;
+}
+#current-activity td {
+  white-space: nowrap;
+}
+#current-activity .activity {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+#current-activity .tags {
+}
+#current-activity .time {
+}
+#current-activity .button {
+  text-align: right;
+  width: 100%;
+}
+
+#new-activity {
+  padding-bottom: 1em;
+}
+#new-activity .activity {
+  width: 50%;
+  font-weight: bold;
+}
+#new-activity .activity input {
+  width: 99%;
+  line-height: 1.4em;
+}
+#new-activity .tags {
+  width: 50%;
+}
+#new-activity .tags input {
+  width: 99%;
+  line-height: 1.4em;
+}
+#new-activity .button {
+}
+
+/* http://sonspring.com/journal/clearing-floats */
+.clear {
+  clear: both;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+input.empty {
+  color: lightgray;
+}
+
+ul.day-times {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+ul.day-times li {
+  display: block;
+  clear: both;
+}
+
+ul.times {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+ul.times > li {
+  position: relative;
+  display: block;
+  clear: both;
+  padding: 0.2em 0;
+}
+ul.times div.time {
+  width: 3em;
+  text-align: center;
+  float: left;
+}
+ul.times div.start-time {
+  margin-right: 0.3em;
+  float: left;
+}
+ul.times div.end-time {
+  margin-left: 0.3em;
+  float: left;
+}
+ul.times div.time-separator {
+  float: left;
+}
+ul.times div.task-name {
+  margin: 0 0.3em 0 1em;
+  float: left;
+  cursor: pointer;
+}
+ul.times div.project-name {
+  color: #b8b8b8;
+  float: left;
+}
+ul.times div.duration {
+  float: right;
+  text-align: right;
+}
+ul.times div.icons {
+  float: right;
+  text-align: right;
+  cursor: pointer;
+  margin-top: 0.2em;
+}
+ul.times div.icons span.ui-icon {
+  float: left;
+  margin-left: 0.4em;
+}
+ul.times div.icons span.ui-icon-pencil {
+  margin-left: 0.7em;
+}
+ul.times div.tags > ul {
+  list-style-type: none;
+}
+ul.times div.tags > ul > li {
+  float: left;
+  margin-left: 1em;
+  margin-top: 0.3em;
+  font-size: x-small;
+  background: yellow;
+  border: 1px solid gray;
+  padding: 0.2em;
+}
+
+#activity-dialog .activity-name,
+#activity-dialog .activity-tags {
+  width: 100%;
+}
+
+.right {
+  text-align: right;
+}

@@ -1,1 +1,148 @@
-HEY!
+<div id="current-activity">
+  <table>
+    <tr>
+      <td class="activity">No activity</td>
+      <td class="tags">&nbsp;</td>
+      <td class="time">&nbsp;</td>
+      <td class="button">
+        <button id="stop-tracking" disabled="disabled">Stop tracking</button>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="clear"></div>
+
+<div id="new-activity">
+  <form id="new-activity-form">
+    <table>
+      <tr>
+        <td class="activity"><input class="activity-name unfocused" type="text" name="activity" /></td>
+        <td class="tags"><input class="activity-tags unfocused" type="text" name="tags" /></td>
+        <td><input id="start-tracking" type="submit" value="Start tracking" /></td>
+      </tr>
+    </table>
+  </form>
+</div>
+<div class="clear"></div>
+
+<div id="tabs">
+  <ul>
+    <li><a href="#today-tab">Today</a></li>
+    <li><a href="#week-tab">Week</a></li>
+  </ul>
+  <div id="today-tab">
+    <ul id="today-times" class="times">
+    </ul>
+  </div>
+  <div id="week-tab">
+    <ul class="day-times">
+      <li>
+        <h3>Sunday</h3>
+        <ul id="weekday-0-times" class="times">
+        </ul>
+        <div class="clear"></div>
+      </li>
+      <li>
+        <h3>Monday</h3>
+        <ul id="weekday-1-times" class="times">
+        </ul>
+        <div class="clear"></div>
+      </li>
+      <li>
+        <h3>Tuesday</h3>
+        <ul id="weekday-2-times" class="times">
+        </ul>
+        <div class="clear"></div>
+      </li>
+      <li>
+        <h3>Wednesday</h3>
+        <ul id="weekday-3-times" class="times">
+        </ul>
+        <div class="clear"></div>
+      </li>
+      <li>
+        <h3>Thursday</h3>
+        <ul id="weekday-4-times" class="times">
+        </ul>
+        <div class="clear"></div>
+      </li>
+      <li>
+        <h3>Friday</h3>
+        <ul id="weekday-5-times" class="times">
+        </ul>
+        <div class="clear"></div>
+      </li>
+      <li>
+        <h3>Saturday</h3>
+        <ul id="weekday-6-times" class="times">
+        </ul>
+        <div class="clear"></div>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="right">
+  <button id="add-earlier-activity">Add earlier activity</button>
+</div>
+<div id="activity-dialog" style="display: none;">
+  <form>
+    <input class="activity-id" type="hidden" value="" />
+    <table>
+      <tbody>
+        <tr>
+          <td>Time:</td>
+          <td>
+            <input class="activity-start-date" type="text" name="start-date" size="10" />
+            <input class="activity-start-time" type="text" name="start-time" size="5" />
+            to
+            <input class="activity-end-time" type="text" name="end-time" size="5" disabled="disabled" />
+            <span class="activity-end-date"></span>
+            <input id="in-progress-checkbox" class="activity-in-progress" type="checkbox" name="running" value="true" checked="checked" />
+            <label for="in-progress-checkbox">in progress</label>
+          </td>
+        </tr>
+        <tr>
+          <td>Activity:</td>
+          <td><input class="activity-name" type="text" name="activity" /></td>
+        </tr>
+        <tr>
+          <td>Tags:</td>
+          <td><input class="activity-tags" type="text" name="tags" /></td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>
+
+<script type="text/javascript">
+  $(function() {
+    $('#tabs').tabs();
+    $('#new-activity-form .activity-name').focus(function() {
+      var obj = $(this);
+      if (obj.val() == "Activity") {
+        obj.val('');
+      }
+      obj.removeClass('empty');
+    }).blur(function() {
+      var obj = $(this);
+      if (!obj.val()) {
+        obj.val('Activity');
+        obj.addClass('empty');
+      }
+    }).blur();
+
+    $('#new-activity-form .activity-tags').focus(function() {
+      var obj = $(this);
+      if (obj.val() == "Tags") {
+        obj.val('');
+      }
+      obj.removeClass('empty');
+    }).blur(function() {
+      var obj = $(this);
+      if (!obj.val()) {
+        obj.val('Tags');
+        obj.addClass('empty');
+      }
+    }).blur();
+  });
+</script>
