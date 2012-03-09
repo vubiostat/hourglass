@@ -5,6 +5,7 @@ gem "swt"
 gem "sequel"
 gem "jdbc-h2"
 gem "mongrel"
+gem "json"
 
 group :development do
   gem "rdoc", "~> 3.12"

@@ -48,6 +48,7 @@ DEPENDENCIES
   guard-test
   jdbc-h2
   jeweler (~> 1.8.3)
+  json
   mocha
   mongrel
   rack-test

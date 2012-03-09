@@ -12,5 +12,23 @@ module Hourglass
       @activity = Activity.new
       erb :form
     end
+
+    post '/activities' do
+      @activity = Activity.new(params['activity'])
+      if @activity.valid?
+        @activity.save
+        if request.xhr?
+          @activity.values.to_json
+        else
+          redirect '/'
+        end
+      else
+        if request.xhr?
+          'false'
+        else
+          erb :form
+        end
+      end
+    end
   end
 end

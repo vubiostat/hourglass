@@ -21,4 +21,9 @@ require 'hourglass'
 Hourglass::Database.migrate!
 
 class Test::Unit::TestCase
+  def run_with_transaction(*args, &block)
+    Sequel::Model.db.transaction(:rollback=>:always){run_without_transaction(*args, &block)}
+  end
+  alias :run_without_transaction :run
+  alias :run :run_with_transaction
 end
