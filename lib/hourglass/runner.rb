@@ -16,7 +16,7 @@ module Hourglass
 
       def initialize(*args)
         @shell = Swt::Widgets::Shell.new(*args)
-        @shell.set_size(500, 269)
+        @shell.set_size(500, 400)
         @shell.layout = Swt::Layout::FillLayout.new
         @shell.add_shell_listener(self)
         super(@shell)
@@ -36,7 +36,6 @@ module Hourglass
 
       def set_client_area_size(width, height)
         @shell.set_size(width + @frame_x, height + @frame_y)
-        p [@shell.size.x, @shell.size.y]
       end
     end
 
@@ -99,7 +98,7 @@ module Hourglass
 
       def completed(event)
         # For ProgressListener
-        @shell_wrapper.set_client_area_size(outer_body_width, outer_body_height);
+        #@shell_wrapper.set_client_area_size(outer_body_width, outer_body_height);
       end
 
       def outer_body_width

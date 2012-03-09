@@ -25,7 +25,7 @@
 </div>
 <div class="clear"></div>
 
-<div id="tabs">
+<div id="tabs" style="height: 100%;">
   <ul>
     <li><a href="#today-tab">Today</a></li>
     <li><a href="#week-tab">Week</a></li>
@@ -81,11 +81,21 @@
     </ul>
   </div>
 </div>
-<div class="right">
+<div class="right" style="margin: 0.5em 0";>
   <button id="add-earlier-activity">Add earlier activity</button>
 </div>
 
 <script type="text/javascript">
+  function resizeUI() {
+    var h = $(window).height();
+    var w = $(window).width();
+    var t = $('#tabs');
+    var outerH = h - t.offset().top - t.next().outerHeight(true);
+    t.outerHeight(outerH);
+
+    var paneH = t.height() - t.find('.ui-tabs-nav').outerHeight(true);
+    t.find('.ui-tabs-panel').outerHeight(paneH);
+  }
   $(function() {
     $('#tabs').tabs();
     $('#new-activity-form .activity-name').focus(function() {
@@ -115,30 +125,37 @@
         obj.addClass('empty');
       }
     }).blur();
-  });
 
-  $('#activity-dialog').dialog({
-    autoOpen: false,
-    width: 'auto',
-    title: 'Add earlier activity',
-    buttons: {
-      "Cancel": function() {
-        $(this).dialog('close');
-      },
-      "Save": function() {
-        $(this).find('form').submit();
+    $('#activity-dialog').dialog({
+      autoOpen: false,
+      width: 'auto',
+      title: 'Add earlier activity',
+      buttons: {
+        "Cancel": function() {
+          $(this).dialog('close');
+        },
+        "Save": function() {
+          $(this).find('form').submit();
+        }
       }
-    }
-  }).find('form').submit(function(e) {
-    e.preventDefault();
-    f.parent().dialog('close');
-  }).find('input').keydown(function(e) {
-    if (e.keyCode == 13) {
-      $(this).closest('form').submit();
-    }
-  });
+    }).find('form').submit(function(e) {
+      e.preventDefault();
+      f.parent().dialog('close');
+    }).find('input').keydown(function(e) {
+      if (e.keyCode == 13) {
+        $(this).closest('form').submit();
+      }
+    });
 
-  $('#add-earlier-activity').click(function(e) {
-    window.open("/activities/new", '_blank');
+    $('#add-earlier-activity').click(function(e) {
+      window.open("/activities/new", '_blank');
+    });
+
+    var resizeTimer = null;
+    $(window).bind('resize', function() {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resizeUI, 100);
+    });
+    resizeUI();
   });
 </script>

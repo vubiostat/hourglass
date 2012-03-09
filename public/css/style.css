@@ -141,3 +141,7 @@ ul.times div.tags > ul > li {
 .right {
   text-align: right;
 }
+
+.ui-tabs-panel {
+  overflow: auto;
+}
