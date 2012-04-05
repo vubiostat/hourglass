@@ -13,6 +13,10 @@ module Hourglass
     File.expand_path(File.join(File.dirname(__FILE__), '..'))
   end
 
+  def self.root_path
+    @root_path ||= Pathname.new(root)
+  end
+
   def self.environment
     @environment ||= ENV['HOURGLASS_ENV'] || :production
   end
@@ -53,13 +57,18 @@ module Hourglass
     end
     @data_path
   end
+
+  path = root_path + 'lib' + 'hourglass'
+  autoload :Project,  (path + 'project').to_s
+  autoload :Activity, (path + 'activity').to_s
+  autoload :Tag,      (path + 'tag').to_s
+  autoload :Setting,  (path + 'setting').to_s
 end
 
-path = Pathname.new(File.dirname(__FILE__)) + "hourglass"
+path = Hourglass.root_path + 'lib' + 'hourglass'
 require path + 'database'
-require path + 'project'
-require path + 'activity'
-require path + 'tag'
-require path + 'setting'
 require path + 'application'
 require path + 'runner'
+
+Sequel::Model.plugin :json_serializer, :naked => true
+Sequel::Model.plugin :validation_helpers

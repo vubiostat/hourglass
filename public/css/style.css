@@ -3,6 +3,23 @@ body {
   font-size: 16px;
 }
 
+td.activity-tags {
+  width: 100%;
+}
+td.activity-tags ul {
+  list-style-type: none;
+  margin: 0 0 0 1em;
+  padding: 0;
+}
+td.activity-tags ul li {
+  margin-left: 0.2em;
+  font-size: x-small;
+  background: yellow;
+  border: 1px solid gray;
+  padding: 0.2em;
+  display: inline;
+}
+
 #current-activity {
   position: relative;
   padding-bottom: 1em;
@@ -10,17 +27,12 @@ body {
 #current-activity td {
   white-space: nowrap;
 }
-#current-activity .activity {
+#current-activity .activity-name {
   font-weight: bold;
   font-size: 1.5em;
 }
-#current-activity .tags {
-}
-#current-activity .time {
-}
 #current-activity .button {
   text-align: right;
-  width: 100%;
 }
 
 #new-activity {
@@ -68,70 +80,48 @@ ul.day-times li {
   clear: both;
 }
 
-ul.times {
-  list-style-type: none;
+table.times {
   margin: 0;
   padding: 0;
+  width: 100%;
 }
-ul.times > li {
+table.times tr {
   position: relative;
-  display: block;
-  clear: both;
+}
+table.times td {
   padding: 0.2em 0;
+  white-space: nowrap;
 }
-ul.times div.time {
-  width: 3em;
-  text-align: center;
-  float: left;
+table.times td.activity-started-at {
+  padding-right: 0.3em;
 }
-ul.times div.start-time {
-  margin-right: 0.3em;
-  float: left;
+table.times td.activity-ended-at {
+  padding-left: 0.3em;
 }
-ul.times div.end-time {
-  margin-left: 0.3em;
-  float: left;
+table.times td.time-separator {
 }
-ul.times div.time-separator {
-  float: left;
-}
-ul.times div.task-name {
-  margin: 0 0.3em 0 1em;
-  float: left;
+table.times td.activity-name {
+  padding: 0 0.3em 0 1em;
   cursor: pointer;
 }
-ul.times div.project-name {
+table.times td.project-name {
   color: #b8b8b8;
-  float: left;
+  padding: 0 0.3em 0 1em;
 }
-ul.times div.duration {
-  float: right;
+table.times td.activity-duration {
   text-align: right;
 }
-ul.times div.icons {
-  float: right;
+table.times td.icons {
   text-align: right;
   cursor: pointer;
-  margin-top: 0.2em;
+  padding-top: 0.2em;
 }
-ul.times div.icons span.ui-icon {
+table.times td.icons span.ui-icon {
   float: left;
   margin-left: 0.4em;
 }
-ul.times div.icons span.ui-icon-pencil {
+table.times td.icons span.ui-icon-pencil {
   margin-left: 0.7em;
-}
-ul.times div.tags > ul {
-  list-style-type: none;
-}
-ul.times div.tags > ul > li {
-  float: left;
-  margin-left: 1em;
-  margin-top: 0.3em;
-  font-size: x-small;
-  background: yellow;
-  border: 1px solid gray;
-  padding: 0.2em;
 }
 
 #activity-dialog .activity-name,
@@ -142,6 +132,7 @@ ul.times div.tags > ul > li {
   text-align: right;
 }
 
-.ui-tabs-panel {
+.ui-tabs .ui-tabs-panel {
   overflow: auto;
+  padding: 1em;
 }

@@ -33,4 +33,27 @@ class TestActivity < Test::Unit::TestCase
     assert_equal 2, activity.tags.length
     assert_equal 2, Database[:activities_tags].filter(:activity_id => activity.id).count
   end
+
+  test "requires project name" do
+    activity = Activity.new(:name => nil)
+    assert !activity.valid?, "Activity was valid when it shouldn't have been"
+  end
+
+  test "duration for current activity" do
+    activity = Activity.create(:name => 'foo', :started_at => Time.now - 12345)
+    assert (activity.duration - 12345000).abs < 100
+  end
+
+  test "duration for finished activity" do
+    now = Time.now
+    activity = Activity.create(:name => 'foo', :started_at => now - 45678, :ended_at => now)
+    assert (activity.duration - 45678000).abs < 100
+  end
+
+  test "running? is true when ended_at is not nil" do
+    activity = Activity.create(:name => 'foo', :started_at => Time.now - 12345)
+    assert activity.running?
+    activity.update(:ended_at => Time.now)
+    assert !activity.running?
+  end
 end

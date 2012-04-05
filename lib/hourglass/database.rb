@@ -1,5 +1,11 @@
 module Hourglass
-  Database = Sequel.connect("jdbc:h2:#{Hourglass.db_path};IGNORECASE=TRUE")
+  if Hourglass.environment.to_s != "test"
+    options = {:logger => Logger.new(File.join(Hourglass.root, "log", "database.log"))}
+  else
+    options = {}
+  end
+
+  Database = Sequel.connect("jdbc:h2:#{Hourglass.db_path};IGNORECASE=TRUE", options)
   class << Database
     def rollback!
       version = self[:schema_info].first[:version]

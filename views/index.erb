@@ -1,14 +1,5 @@
 <div id="current-activity">
-  <table>
-    <tr>
-      <td class="activity">No activity</td>
-      <td class="tags">&nbsp;</td>
-      <td class="time">&nbsp;</td>
-      <td class="button">
-        <button id="stop-tracking" disabled="disabled">Stop tracking</button>
-      </td>
-    </tr>
-  </table>
+  <%= erb(:_current, :locals => {:activity => @activities['current']}) %>
 </div>
 <div class="clear"></div>
 
@@ -31,54 +22,10 @@
     <li><a href="#week-tab">Week</a></li>
   </ul>
   <div id="today-tab">
-    <ul id="today-times" class="times">
-    </ul>
+    <%= erb(:_today, :locals => {:activities => @activities['today']}) %>
   </div>
   <div id="week-tab">
-    <ul class="day-times">
-      <li>
-        <h3>Sunday</h3>
-        <ul id="weekday-0-times" class="times">
-        </ul>
-        <div class="clear"></div>
-      </li>
-      <li>
-        <h3>Monday</h3>
-        <ul id="weekday-1-times" class="times">
-        </ul>
-        <div class="clear"></div>
-      </li>
-      <li>
-        <h3>Tuesday</h3>
-        <ul id="weekday-2-times" class="times">
-        </ul>
-        <div class="clear"></div>
-      </li>
-      <li>
-        <h3>Wednesday</h3>
-        <ul id="weekday-3-times" class="times">
-        </ul>
-        <div class="clear"></div>
-      </li>
-      <li>
-        <h3>Thursday</h3>
-        <ul id="weekday-4-times" class="times">
-        </ul>
-        <div class="clear"></div>
-      </li>
-      <li>
-        <h3>Friday</h3>
-        <ul id="weekday-5-times" class="times">
-        </ul>
-        <div class="clear"></div>
-      </li>
-      <li>
-        <h3>Saturday</h3>
-        <ul id="weekday-6-times" class="times">
-        </ul>
-        <div class="clear"></div>
-      </li>
-    </ul>
+    <%= erb(:_week, :locals => {:activities => @activities['week']}) %>
   </div>
 </div>
 <div class="right" style="margin: 0.5em 0";>
@@ -96,14 +43,37 @@
     var paneH = t.height() - t.find('.ui-tabs-nav').outerHeight(true);
     t.find('.ui-tabs-panel').outerHeight(paneH);
   }
+  function isSameDay(one, two) {
+    return one.getFullYear() == two.getFullYear() &&
+           one.getMonth() == two.getMonth() &&
+           one.getDate() == two.getDate()
+  }
+  function updateUI(data) {
+    $('#current-activity').html(data.current);
+    $('#today-tab').html(data.today);
+    $('#week-tab').html(data.week);
+  }
+
   $(function() {
     $('#tabs').tabs();
 
     $('#new-activity-form').submit(function(e) {
       e.preventDefault();
-      $.post('/activities', $(this).serialize(), function(data, status) {
-        console.log(data);
-      });
+
+      var form = $(this);
+      var name = form.find('.activity-name');
+      var tags = form.find('.activity-tags');
+      var data = {
+        'activity[name]': (name.hasClass('empty') ? "" : name.val()),
+        'activity[tag_names]': (tags.hasClass('empty') ? "" : tags.val())
+      };
+      $.post('/activities', data, function(data, status) {
+        if (data) {
+          updateUI(data);
+          form.find('.activity-name').val('').not(':focus').blur();
+          form.find('.activity-tags').val('').not(':focus').blur();
+        }
+      }, 'json');
     });
 
     $('#new-activity-form .activity-name').focus(function() {
@@ -155,8 +125,14 @@
       }
     });
 
+    $('.stop-tracking').live('click', function(e) {
+      e.preventDefault();
+      $.get('/activities/current/stop', function(data) {
+        updateUI(data);
+      }, 'json')
+    });
     $('#add-earlier-activity').click(function(e) {
-      window.open("/activities/new", '_blank');
+      //window.open("/activities/new", '_blank');
     });
 
     var resizeTimer = null;

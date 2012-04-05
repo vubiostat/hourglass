@@ -4,21 +4,16 @@
   <title>Hourglass</title>
   <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
   <script type="text/javascript" src="/js/jquery-ui-1.8.18.custom.min.js"></script>
+  <%-
+    setting = Hourglass::Setting.filter(:name => 'theme').first
+    theme = setting ? setting.value : "smoothness"
+  -%>
+  <link type="text/css" rel="stylesheet" href="/css/<%= theme %>/jquery-ui.css" />
   <link type="text/css" rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
 
 <%= yield %>
-
-<%-
-  setting = Hourglass::Setting.filter(:name => 'theme').first
-  theme = setting ? setting.value : "smoothness"
--%>
-<script type="text/javascript">
-  $(function() {
-    $('head').prepend('<link type="text/css" rel="stylesheet" href="/css/<%= theme %>/jquery-ui.css" />');
-  });
-</script>
 
 </body>
 </html>

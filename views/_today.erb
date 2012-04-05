@@ -1,0 +1,5 @@
+<table id="today-times" class="times">
+  <%- activities.each do |activity| -%>
+    <%= erb(:_activity, :locals => {:activity => activity}) %>
+  <%- end -%>
+</table>

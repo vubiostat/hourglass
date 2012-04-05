@@ -1,0 +1,13 @@
+<tr class="activity-<%= activity.id %>">
+  <td class="activity-started-at"><%= activity.started_at.strftime("%H:%M") %></td>
+  <td class="time-separator">-</td>
+  <td class="activity-ended-at"><%= activity.ended_at ? activity.ended_at.strftime("%H:%M") : "&nbsp" %></td>
+  <td class="activity-name"><%= activity.name %></td>
+  <td class="project-name"><%= activity.project ? activity.project.name : "unsorted" %></td>
+  <td class="activity-tags"><%= activity_tags(activity) %></td>
+<%- if activity.ended_at -%>
+  <td class="activity-duration activity-finished" title="<%= activity.duration %>"><%= activity.duration %></td>
+<%- else -%>
+  <td class="activity-duration activity-running" title="<%= activity.started_at.iso8601 %>"><%= activity.duration %></td>
+<%- end -%>
+</li>

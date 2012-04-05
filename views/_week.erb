@@ -1,0 +1,15 @@
+<ul class="day-times">
+<%- index = 0; today = Date.today; sunday = today - today.wday -%>
+<%- %w{Sunday Monday Tuesday Wednesday Thursday Friday Saturday}.each_with_index do |day, i| -%>
+  <li>
+    <h3><%= day %></h3>
+    <table id="weekday-<%= i %>-times" class="times">
+    <%- while index < activities.size && activities[index].start_day == (sunday + i) -%>
+      <%- activity = activities[index]; index += 1 -%>
+      <%= erb(:_activity, :locals => {:activity => activity}) %>
+    <%- end -%>
+    </table>
+    <div class="clear"></div>
+  </li>
+<%- end -%>
+</ul>
