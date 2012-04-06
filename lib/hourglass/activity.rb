@@ -6,22 +6,31 @@ module Hourglass
     many_to_one :project
     many_to_many :tags
 
-    def_dataset_method(:current) do
-      filter(:ended_at => nil).eager(:tags, :project)
-    end
+    subset(:current, :ended_at => nil)
+    def_dataset_method(:current_e) { current.eager(:tags, :project) }
 
-    def_dataset_method(:today) do
-      filter { started_at >= Date.today }.eager(:tags, :project)
-    end
+    subset(:today) { started_at >= Date.today }
+    def_dataset_method(:today_e) { today.eager(:tags, :project) }
 
-    def_dataset_method(:week) do
+    subset(:week) do
       today = Date.today
       sunday = today - today.wday
-      filter { started_at >= sunday && started_at < (sunday + 7) }.eager(:tags, :project)
+      started_at >= sunday && started_at < (sunday + 7)
+    end
+    def_dataset_method(:week_e) { week.eager(:tags, :project) }
+
+    subset(:sub_minute) do
+      ended_at != nil &&
+        :datediff.sql_function("second", :started_at, :ended_at) < 60
     end
 
     def self.stop_current_activities
-      filter(:ended_at => nil).update(:ended_at => Time.now)
+      current.update(:ended_at => Time.now)
+      ids = sub_minute.select_map(:id)
+      if !ids.empty?
+        db[:activities_tags].filter(:activity_id => ids).delete
+        sub_minute.delete
+      end
     end
 
     def start_day
@@ -30,7 +39,19 @@ module Hourglass
     end
 
     def duration
-      ((ended_at ? ended_at - started_at : Time.now - started_at) * 1000).floor
+      (ended_at ? ended_at - started_at : Time.now - started_at).floor
+    end
+
+    def duration_in_words
+      minutes = duration / 60
+      hours = minutes / 60
+      days = hours / 24
+
+      strings = []
+      strings << "#{days}d" if days > 0
+      strings << "#{hours}h" if hours > 0
+      strings << "#{minutes}min" if minutes > 0
+      strings.join(" ")
     end
 
     def running?

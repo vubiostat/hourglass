@@ -16,15 +16,15 @@ module Hourglass
         {
           'today' => erb(:_today, {
             :layout => false,
-            :locals => {:activities => Activity.today.all}
+            :locals => {:activities => Activity.today_e.all}
           }),
           'week' => erb(:_week, {
             :layout => false,
-            :locals => {:activities => Activity.week.all}
+            :locals => {:activities => Activity.week_e.all}
           }),
           'current' => erb(:_current, {
             :layout => false,
-            :locals => {:activity => Activity.current.first}
+            :locals => {:activity => Activity.current_e.first}
           })
         }
       end
@@ -32,9 +32,9 @@ module Hourglass
 
     get '/' do
       @activities = {
-        'today' => Activity.today.all,
-        'week' => Activity.week.all,
-        'current' => Activity.current.first
+        'today' => Activity.today_e.all,
+        'week' => Activity.week_e.all,
+        'current' => Activity.current_e.first
       }
       erb :index
     end
@@ -73,6 +73,10 @@ module Hourglass
     get '/activities/current/stop' do
       Activity.stop_current_activities
       all_partials.to_json
+    end
+
+    configure do
+      Activity.stop_current_activities
     end
   end
 end

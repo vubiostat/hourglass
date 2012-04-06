@@ -41,13 +41,13 @@ class TestActivity < Test::Unit::TestCase
 
   test "duration for current activity" do
     activity = Activity.create(:name => 'foo', :started_at => Time.now - 12345)
-    assert (activity.duration - 12345000).abs < 100
+    assert (activity.duration - 12345).abs < 1
   end
 
   test "duration for finished activity" do
     now = Time.now
     activity = Activity.create(:name => 'foo', :started_at => now - 45678, :ended_at => now)
-    assert (activity.duration - 45678000).abs < 100
+    assert (activity.duration - 45678).abs < 1
   end
 
   test "running? is true when ended_at is not nil" do
@@ -55,5 +55,21 @@ class TestActivity < Test::Unit::TestCase
     assert activity.running?
     activity.update(:ended_at => Time.now)
     assert !activity.running?
+  end
+
+  test "stop_current_activities" do
+    activity_1 = Activity.create(:name => 'foo', :started_at => Time.now - 12345)
+    Activity.stop_current_activities
+    assert_not_nil activity_1.refresh.ended_at
+
+    activity_2 = Activity.create(:name => 'foo', :started_at => Time.now - 30)
+    Activity.stop_current_activities
+    assert_equal 0, Activity.filter(:id => activity_2.id).count
+  end
+
+  test "stop_current_activities deletes tag relationships" do
+    activity = Activity.create(:name => 'foo', :tag_names => "hey,buddy", :started_at => Time.now - 30)
+    Activity.stop_current_activities
+    assert_equal 0, Activity.filter(:id => activity.id).count
   end
 end

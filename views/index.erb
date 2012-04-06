@@ -53,6 +53,36 @@
     $('#today-tab').html(data.today);
     $('#week-tab').html(data.week);
   }
+  function millisecondsToWords(num) {
+    var minutes = Math.floor(num / 60000);
+    var hours = Math.floor(minutes / 60);
+    var days = Math.floor(hours / 24);
+
+    var strings = [];
+    if (days > 0) {
+      strings.push(days+'d');
+    }
+    if (hours > 0) {
+      strings.push(hours+'h');
+    }
+    if (minutes > 0) {
+      strings.push(minutes+'min');
+    }
+    return(strings.join(" "));
+  }
+  function updateCurrent() {
+    var now = new Date();
+    $('.activity-running').each(function() {
+      var obj = $(this);
+      var startedAt = obj.data('startedAt');
+      if (typeof(startedAt) == 'undefined') {
+        startedAt = new Date(obj.attr('title'));
+        obj.data('startedAt', startedAt);
+      }
+      var diff = now - startedAt;
+      obj.html(millisecondsToWords(diff));
+    });
+  }
 
   $(function() {
     $('#tabs').tabs();
@@ -141,5 +171,7 @@
         resizeTimer = setTimeout(resizeUI, 100);
     });
     resizeUI();
+
+    var updateTimer = setTimeout(updateCurrent, 60000);
   });
 </script>
