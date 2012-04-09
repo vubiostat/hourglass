@@ -11,12 +11,23 @@ module Hourglass
     class ShellWrapper < Delegator
       include ShellListener
 
-      attr_reader :shell, :frame_x, :frame_y
+      attr_reader :shell, :frame_x, :frame_y, :name
       alias :__getobj__ :shell
 
+      @@sizes = {}
+
       def initialize(*args)
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        @name = options['name']
         @shell = Swt::Widgets::Shell.new(*args)
-        @shell.set_size(500, 400)
+
+        width, height = @@sizes[name] || options['default_size'] || [600, 400]
+        @shell.set_size(width, height)
+
+        if options['center']
+          pt = options['center']
+          @shell.set_location(pt.x - (width / 2), pt.y - (height / 2))
+        end
         @shell.layout = Swt::Layout::FillLayout.new
         @shell.add_shell_listener(self)
         super(@shell)
@@ -26,7 +37,11 @@ module Hourglass
       def shellIconified(event); end
       def shellDeiconified(event); end
       def shellDeactivated(event); end
-      def shellClosed(event); end
+      def shellClosed(event)
+        # remember the shell size
+        point = @shell.get_size
+        @@sizes[@name] = [point.x, point.y]
+      end
 
       def shellActivated(event)
         client_area = @shell.client_area
@@ -64,7 +79,9 @@ module Hourglass
         # For OpenWindowListener
         # pop-up support
         if event.required
-          popup_shell = ShellWrapper.new(@shell_wrapper.display)
+          display = @shell_wrapper.get_display
+          location = display.get_cursor_location
+          popup_shell = ShellWrapper.new(display, Swt::SWT::APPLICATION_MODAL | Swt::SWT::TITLE | Swt::SWT::CLOSE, 'name' => 'popup', 'center' => location, 'default_size' => [650, 200])
           popup_browser = BrowserWrapper.new(popup_shell)
           event.browser = popup_browser.browser
         else
@@ -98,7 +115,7 @@ module Hourglass
 
       def completed(event)
         # For ProgressListener
-        #@shell_wrapper.set_client_area_size(outer_body_width, outer_body_height);
+        @shell_wrapper.set_client_area_size(outer_body_width, outer_body_height);
       end
 
       def outer_body_width
@@ -135,9 +152,9 @@ module Hourglass
 
     def start_browser
       display = Swt::Widgets::Display.new
-      shell_wrapper = ShellWrapper.new(display)
+      shell_wrapper = ShellWrapper.new(display, 'name' => 'main')
       browser_wrapper = BrowserWrapper.new(shell_wrapper)
-      browser_wrapper.set_url("http://localhost:4567")
+      browser_wrapper.set_url("http://localhost:4567", nil, ["user-agent: SWT"].to_java(:String))
       shell_wrapper.open
       while !shell_wrapper.disposed?
         if !display.read_and_dispatch

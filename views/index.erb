@@ -54,8 +54,14 @@
     $('#week-tab').html(data.week);
   }
   function millisecondsToWords(num) {
-    var minutes = Math.floor(num / 60000);
-    var hours = Math.floor(minutes / 60);
+    var total_minutes = Math.floor(num / 60000);
+    if (total_minutes == 0) {
+      return("0min");
+    }
+
+    var minutes = total_minutes % 60;
+    var total_hours = Math.floor(total_minutes / 60);
+    var hours = total_hours % 24;
     var days = Math.floor(hours / 24);
 
     var strings = [];
@@ -65,14 +71,15 @@
     if (hours > 0) {
       strings.push(hours+'h');
     }
-    if (minutes > 0) {
+    if (minutes < 0) {
       strings.push(minutes+'min');
     }
+
     return(strings.join(" "));
   }
   function updateCurrent() {
     var now = new Date();
-    $('.activity-running').each(function() {
+    $('.activity-duration.activity-running').each(function() {
       var obj = $(this);
       var startedAt = obj.data('startedAt');
       if (typeof(startedAt) == 'undefined') {
@@ -95,7 +102,8 @@
       var tags = form.find('.activity-tags');
       var data = {
         'activity[name]': (name.hasClass('empty') ? "" : name.val()),
-        'activity[tag_names]': (tags.hasClass('empty') ? "" : tags.val())
+        'activity[tag_names]': (tags.hasClass('empty') ? "" : tags.val()),
+        'activity[running]': 'true'
       };
       $.post('/activities', data, function(data, status) {
         if (data) {
@@ -161,8 +169,22 @@
         updateUI(data);
       }, 'json')
     });
+
+    var popupInterval = null;
     $('#add-earlier-activity').click(function(e) {
-      //window.open("/activities/new", '_blank');
+    <%# if @user_agent == "SWT" -%>
+      // FIXME: @user_agent is wrong?
+      var button = $(this);
+      var popup = window.open("/activities/new", '_blank');
+      popupInterval = setInterval(function() {
+        if (popup.closed) {
+          clearTimeout(popupInterval);
+          button.attr('disabled', false);
+        }
+      }, 200);
+    <%# else -%>
+      // TODO: standalone browsers
+    <%# end -%>
     });
 
     var resizeTimer = null;

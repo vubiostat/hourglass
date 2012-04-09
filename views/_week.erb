@@ -4,7 +4,7 @@
   <li>
     <h3><%= day %></h3>
     <table id="weekday-<%= i %>-times" class="times">
-    <%- while index < activities.size && activities[index].start_day == (sunday + i) -%>
+    <%- while index < activities.size && activities[index].started_at_date == (sunday + i) -%>
       <%- activity = activities[index]; index += 1 -%>
       <%= erb(:_activity, :locals => {:activity => activity}) %>
     <%- end -%>

@@ -3,6 +3,10 @@ module Hourglass
     set :root, Hourglass.root
     set :erb, :trim => '-'
 
+    if development?
+      use Rack::CommonLogger
+    end
+
     helpers do
       def activity_tags(activity)
         result = "<ul>"
@@ -30,26 +34,37 @@ module Hourglass
       end
     end
 
+    before do
+      @user_agent = request.user_agent
+    end
+
     get '/' do
-      @activities = {
-        'today' => Activity.today_e.all,
-        'week' => Activity.week_e.all,
-        'current' => Activity.current_e.first
-      }
-      erb :index
+      if request.xhr?
+        all_partials.to_json
+      else
+        @activities = {
+          'today' => Activity.today_e.all,
+          'week' => Activity.week_e.all,
+          'current' => Activity.current_e.first
+        }
+        erb :index
+      end
     end
 
     get '/activities/new' do
-      @activity = Activity.new
-      erb :form
+      @activity = Activity.new(:started_at => Time.now, :running => true)
+      erb :new
     end
 
     post '/activities' do
       @activity = Activity.new(params['activity'] || {})
       @activity.started_at ||= Time.now
       if @activity.valid?
-        # stop running activities
-        Activity.filter(:ended_at => nil).update(:ended_at => Time.now)
+        if @activity.running?
+          # TODO: This should be different if we're editing an already
+          # running activity.
+          Activity.stop_current_activities
+        end
         @activity.save
         if request.xhr?
           all_partials.merge('activity' => @activity).to_json
@@ -60,7 +75,7 @@ module Hourglass
         if request.xhr?
           'false'
         else
-          erb :form
+          erb :new
         end
       end
     end
