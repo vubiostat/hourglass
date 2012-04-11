@@ -187,10 +187,50 @@
     <%# end -%>
     });
 
+    $('input.activity-name').autocomplete({
+      minLength: 0,
+      source: "/activities",
+      focus: function(event, ui) {
+        var item = ui.item;
+        var activityName = $(event.target);
+
+        var str = item.name;
+        if (item.project) {
+          str += "@" + item.project.name;
+        }
+        activityName.val(str);
+
+        return false;
+      },
+      select: function(event, ui) {
+        var item = ui.item;
+        var activityName = $(event.target);
+        var activityTags = activityName.closest('form').find('.activity-tags');
+
+        var str = item.name;
+        if (item.project) {
+          str += "@" + item.project.name;
+        }
+        activityName.val(str);
+        activityTags.val(item.tag_names).removeClass('empty').blur();
+
+        return false;
+      }
+    }).data( "autocomplete" )._renderItem = function(ul, item) {
+      var str = item.name;
+      if (item.project) {
+        str += "@" + item.project.name;
+      }
+      return $("<li></li>")
+      .data("item.autocomplete", item)
+      .append("<a>" + str + "</a>")
+      .appendTo(ul);
+    };
+
     var resizeTimer = null;
     $(window).bind('resize', function() {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(resizeUI, 100);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(resizeUI, 100);
     });
     resizeUI();
 

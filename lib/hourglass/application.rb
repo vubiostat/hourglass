@@ -81,8 +81,21 @@ module Hourglass
     end
 
     get '/activities' do
-      day = DateTime.strptime(params[:d], "%Y%m%d")
-      Activity.filter(:started_at >= day, :started_at < (day + 24 * 60 * 60)).to_json(:include => [:tags, :project])
+      ds = Activity.select(:activities.*)
+      term = params['term']
+      if term && !term.empty?
+        md = term.match(/^([^@]+)(?:@(.+)?)?$/)
+        if md
+          ds = ds.filter(:activities__name.like("#{md[1]}%"))
+          if md[2]
+            ds = ds.join(:projects, :id => :project_id).
+              filter(:projects__name.like("#{md[2]}%"))
+          end
+        else
+          return("[]")
+        end
+      end
+      ds.uniq.to_json(:include => [:tag_names, :tags, :project])
     end
 
     get '/activities/current/stop' do

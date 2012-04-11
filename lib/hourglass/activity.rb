@@ -8,22 +8,40 @@ module Hourglass
     attr_writer :tag_names, :running, :started_at_mdy, :started_at_hm,
       :ended_at_mdy, :ended_at_hm
 
+    def_dataset_method(:full) { eager(:tags, :project) }
+
     subset(:current, :ended_at => nil)
-    def_dataset_method(:current_e) { current.eager(:tags, :project) }
+    def_dataset_method(:current_e) { current.full }
 
     subset(:today) { started_at >= Date.today }
-    def_dataset_method(:today_e) { today.eager(:tags, :project) }
+    def_dataset_method(:today_e) { today.full }
 
     subset(:week) do
       today = Date.today
       sunday = today - today.wday
       (started_at >= sunday) & (started_at < (sunday + 7))
     end
-    def_dataset_method(:week_e) { week.eager(:tags, :project) }
+    def_dataset_method(:week_e) { week.full }
 
     subset(:sub_minute) do
       ended_at != nil &&
         :datediff.sql_function("second", :started_at, :ended_at) < 60
+    end
+
+    def_dataset_method(:uniq) do
+      # figure out if the projects table has already been joined
+      ds =
+        if (opts[:join] || []).collect(&:table).include?(:projects)
+          self
+        else
+          join(:projects, :id => :project_id)
+        end
+      ds = ds.naked.
+        select(:min.sql_function(:activities__id).as(:id)).
+        group(:activities__name, :projects__name)
+
+      ids = ds.collect { |row| row[:id] }
+      filter(:activities__id => ids)
     end
 
     def self.stop_current_activities
@@ -91,6 +109,14 @@ module Hourglass
         @tag_names
       else
         new? ? "" : tags_dataset.select_map(:name).join(", ")
+      end
+    end
+
+    def name_with_project
+      if project
+        "#{name}@#{project.name}"
+      else
+        name
       end
     end
 

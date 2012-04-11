@@ -1,3 +1,5 @@
+require 'optparse'
+
 module Hourglass
   class Runner
     import org.eclipse.swt.events.ShellListener
@@ -127,10 +129,23 @@ module Hourglass
       end
     end
 
-    def initialize
+    def initialize(argv = ARGV)
+      options = {}
+      OptionParser.new do |opts|
+        opts.banner = "Usage: #{$0} [options]"
+
+        opts.on("-s", "--server-only", "Only run the web server") do |s|
+          options['server_only'] = s
+        end
+      end.parse(argv)
+
       Database.migrate!
       if start_server
-        start_browser
+        if options['server_only']
+          @web_thread.join
+        else
+          start_browser
+        end
       end
     end
 

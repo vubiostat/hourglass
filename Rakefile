@@ -95,3 +95,14 @@ task :run do
   ENV['HOURGLASS_HOME'] = File.expand_path(File.join(File.dirname(__FILE__)))
   load File.join(File.dirname(__FILE__), 'bin', 'hourglass')
 end
+
+namespace :run do
+  desc "Run only the web server"
+  task :server do
+    ENV['HOURGLASS_ENV'] ||= 'development'
+    ENV['HOURGLASS_HOME'] = File.expand_path(File.join(File.dirname(__FILE__)))
+    ARGV.clear
+    ARGV << "-s"
+    load File.join(File.dirname(__FILE__), 'bin', 'hourglass')
+  end
+end

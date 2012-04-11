@@ -179,4 +179,29 @@ class TestActivity < Test::Unit::TestCase
     assert_equal Time.local(2012, 3, 14, 13, 15), activity.ended_at
     assert !activity.running?
   end
+
+  test "name_with_project" do
+    activity = new_activity(:name => 'Foo@Bar').save
+    assert_equal "Foo@Bar", activity.name_with_project
+  end
+
+  test "uniq" do
+    now = Time.now
+    activity_1 = new_activity(:name => 'Foo@Bar', :started_at => now -  60, :ended_at => now      , :running => false).save
+    activity_2 = new_activity(:name => 'Foo@Bar', :started_at => now - 120, :ended_at => now -  60, :running => false).save
+    activity_3 = new_activity(:name => 'Foo@Baz', :started_at => now - 180, :ended_at => now - 120, :running => false).save
+    assert_equal [activity_1, activity_3], Activity.uniq.all
+  end
+
+  test "uniq with pre-joined dataset" do
+    now = Time.now
+    activity_1 = new_activity(:name => 'Foo@Bar', :started_at => now -  60, :ended_at => now      , :running => false).save
+    activity_2 = new_activity(:name => 'Foo@Bar', :started_at => now - 120, :ended_at => now -  60, :running => false).save
+    activity_3 = new_activity(:name => 'Foo@Baz', :started_at => now - 180, :ended_at => now - 120, :running => false).save
+    actual =
+      Activity.select(:activities.*).
+      filter(:projects__name.like("Baz%")).
+      join(:projects, :id => :project_id).uniq.all
+    assert_equal [activity_3], actual
+  end
 end
