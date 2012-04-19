@@ -4,6 +4,8 @@
   <title><%= @title || "Hourglass" %></title>
   <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
   <script type="text/javascript" src="/js/jquery-ui-1.8.18.custom.min.js"></script>
+  <script type="text/javascript" src="/js/dictionary.js"></script>
+  <script type="text/javascript" src="/js/autocomplete.js"></script>
   <%-
     setting = Hourglass::Setting.filter(:name => 'theme').first
     theme = setting ? setting.value : "smoothness"

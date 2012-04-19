@@ -38,6 +38,9 @@ td.activity-tags ul li {
 #new-activity {
   padding-bottom: 1em;
 }
+#new-activity td {
+  white-space: nowrap;
+}
 #new-activity .activity {
   width: 50%;
   font-weight: bold;
@@ -143,5 +146,13 @@ table.times td.icons span.ui-icon-pencil {
   /* prevent horizontal scrollbar */
   overflow-x: hidden;
   /* add padding to account for vertical scrollbar */
-  padding-right: 20px;
+  /*padding-right: 20px;*/
+}
+.ui-autocomplete-loading { background: white url('../images/ui-anim_basic_16x16.gif') right center no-repeat; }
+
+input.ui-button, .ui-button-text-only .ui-button-text {
+  padding: 0.2em;
+}
+input.ui-button, .ui-button-text-only {
+  font-size: 1em;
 }

@@ -81,26 +81,33 @@ module Hourglass
     end
 
     get '/activities' do
-      ds = Activity.select(:activities.*)
+      ds = Activity.naked.distinct.
+        select(:activities__name.as(:activity_name), :projects__name.as(:project_name)).
+        left_join(:projects, :id => :project_id).
+        order(:activities__name, :projects__name)
+
       term = params['term']
       if term && !term.empty?
         md = term.match(/^([^@]+)(?:@(.+)?)?$/)
         if md
           ds = ds.filter(:activities__name.like("#{md[1]}%"))
           if md[2]
-            ds = ds.join(:projects, :id => :project_id).
-              filter(:projects__name.like("#{md[2]}%"))
+            ds = ds.filter(:projects__name.like("#{md[2]}%"))
           end
         else
           return("[]")
         end
       end
-      ds.uniq.to_json(:include => [:tag_names, :tags, :project])
+      ds.all.to_json
     end
 
     get '/activities/current/stop' do
       Activity.stop_current_activities
       all_partials.to_json
+    end
+
+    get '/tags' do
+      Tag.naked.distinct.order(:name).select_map(:name).to_json
     end
 
     configure do
