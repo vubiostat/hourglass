@@ -109,9 +109,5 @@ module Hourglass
     get '/tags' do
       Tag.naked.distinct.order(:name).select_map(:name).to_json
     end
-
-    configure do
-      Activity.stop_current_activities
-    end
   end
 end

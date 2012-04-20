@@ -147,6 +147,7 @@ module Hourglass
           start_browser
         end
       end
+      Activity.stop_current_activities
     end
 
     def start_server
