@@ -1,4 +1,4 @@
-<tr class="activity-<%= activity.id %>">
+<tr class="activity activity-<%= activity.id %>">
   <td class="activity-started-at"><%= activity.started_at.strftime("%H:%M") %></td>
   <td class="time-separator">-</td>
   <td class="activity-ended-at"><%= activity.ended_at ? activity.ended_at.strftime("%H:%M") : "&nbsp" %></td>
@@ -10,4 +10,8 @@
 <%- else -%>
   <td class="activity-duration activity-running" title="<%= activity.started_at.iso8601 %>"><%= activity.duration_in_words %></td>
 <%- end -%>
+  <td class="icons">
+    <span class="ui-icon ui-icon-pencil"></span>
+    <span class="ui-icon ui-icon-trash"></span>
+  </td>
 </li>

@@ -52,6 +52,32 @@ class TestApplication < Test::Unit::TestCase
     assert_not_nil activity_1.ended_at
   end
 
+  test "edit activity form" do
+    activity = Activity.create(:name => 'Foo@Bar', :tag_names => 'hey, buddy', :started_at => Time.now - 12345, :running => true)
+    get "/activities/#{activity.id}/edit"
+    assert last_response.ok?, last_response.body
+  end
+
+  test "updating activity" do
+    started_at = Time.now - 12345
+    activity = Activity.create(:name => 'Foo@Bar', :tag_names => 'hey, buddy', :started_at => started_at, :running => true)
+
+    ended_at = Time.now
+    data = {
+      'name' => 'Foo@Baz',
+      'tag_names' => 'hey, buddy',
+      'started_at_mdy' => activity.started_at_mdy,
+      'started_at_hm' => activity.started_at_hm,
+      'ended_at_mdy' => ended_at.strftime("%m/%d/%Y"),
+      'ended_at_hm' => ended_at.strftime("%H:%M")
+    }
+    xhr "/activities/#{activity.id}", { 'activity' => data }
+    assert last_response.ok?
+
+    activity.reload
+    assert !activity.running?
+  end
+
   test "fetching activities" do
     day = 24 * 60 * 60
     today = Time.now
@@ -87,5 +113,12 @@ class TestApplication < Test::Unit::TestCase
     assert last_response.ok?, last_response.body
     activity.reload
     assert_not_nil activity.ended_at
+  end
+
+  test "delete activity" do
+    activity = Activity.create(:name => 'Foo@Bar', :started_at => Time.now - 12345, :running => true)
+    xhr "/activities/#{activity.id}/delete", :as => :get
+    assert last_response.ok?, last_response.body
+    assert_nil Activity[activity.id]
   end
 end

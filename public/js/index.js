@@ -39,7 +39,7 @@ function millisecondsToWords(num) {
   if (hours > 0) {
     strings.push(hours+'h');
   }
-  if (minutes < 0) {
+  if (minutes > 0) {
     strings.push(minutes+'min');
   }
 
@@ -138,16 +138,17 @@ $(function() {
     }, 'json')
   });
 
-  var popupInterval = null;
   $('#add-earlier-activity').click(function(e) {
     var button = $(this);
     var popup = window.open("/activities/new", '_blank');
-    popupInterval = setInterval(function() {
+    /*
+    var popupInterval = setInterval(function() {
       if (popup.closed) {
         clearTimeout(popupInterval);
         button.attr('disabled', false);
       }
     }, 200);
+    */
   });
 
   var resizeTimer = null;
@@ -160,6 +161,36 @@ $(function() {
   $('button').button();
   buttonWidth = $('.start-tracking span').width();
   $('.stop-tracking span').width(buttonWidth);
+
+  $('.activity .ui-icon-pencil').live('click', function(e) {
+    var icon = $(this);
+    var activityId = icon.closest('.activity').attr('class').match(/activity-(\d+)/)[1];
+    var popup = window.open("/activities/" + activityId + "/edit", '_blank');
+  });
+
+  var confirmationDialog = $('#confirmation-dialog').dialog({
+    autoOpen: false,
+    resizable: false,
+    modal: true,
+    buttons: {
+      "Delete": function() {
+        var obj = $(this);
+        var activityId = obj.data('activityId');
+        $.get("/activities/" + activityId + "/delete", function(data) {
+          updateUI(data);
+        }, 'json');
+        obj.dialog( "close" );
+      },
+      Cancel: function() {
+        $(this).dialog( "close" );
+      }
+    }
+  });
+
+  $('.activity .ui-icon-trash').live('click', function(e) {
+    var icon = $(this);
+    var activityId = icon.closest('.activity').attr('class').match(/activity-(\d+)/)[1];
+    confirmationDialog.data('activityId', activityId).dialog('open'); });
 
   var updateInterval = setInterval(updateCurrent, 60000);
 });

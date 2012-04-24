@@ -1,0 +1,48 @@
+<%- @title = @activity.new? ? "Add earlier activity" : "Edit activity" -%>
+<form>
+  <div id="activity-form" class="ui-widget ui-widget-content ui-corner-all" style="padding: 0.5em; font-size: 1em; white-space: nowrap;">
+    <%= erb(:form, :locals => {:activity => @activity}) %>
+  </div>
+  <div class="right" style="margin: 0.5em 0";>
+    <input id="save-button" type="submit" value="Save" />
+    <input id="cancel-button" type="button" value="Cancel" />
+  </div>
+</form>
+<script type="text/javascript">
+  $(function() {
+    var form = $('form');
+    var checkbox = $('#in-progress-checkbox');
+
+    checkbox.click(function(e) {
+      if (checkbox.is(':checked')) {
+        form.find('.activity-ended-at-time').attr('disabled', true);
+        form.find('.activity-ended-at-date').attr('disabled', true);
+      }
+      else {
+        form.find('.activity-ended-at-time').attr('disabled', false);
+        form.find('.activity-ended-at-date').attr('disabled', false);
+      }
+    });
+
+    var submitUrl = "<%= @activity.new? ? "/activities" : "/activities/#{@activity.id}" %>";
+    form.submit(function(e) {
+      e.preventDefault();
+      if (checkbox.is(':checked')) {
+        //form.find('.ended-at-time').val('');
+      }
+      $.post(submitUrl, form.serialize(), function(data, status) {
+        if (data) {
+          window.opener.updateUI(data);
+          window.close();
+        }
+        else {
+          // TODO: show reason for failure
+        }
+      }, 'json');
+    });
+    $('#cancel-button').click(function(e) {
+      e.preventDefault();
+      window.close();
+    });
+  });
+</script>

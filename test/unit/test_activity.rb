@@ -204,4 +204,16 @@ class TestActivity < Test::Unit::TestCase
       join(:projects, :id => :project_id).uniq.all
     assert_equal [activity_3], actual
   end
+
+  test "update finished activity to be running" do
+    ended_at = Time.now
+    started_at = ended_at - 12345
+    activity = new_activity({
+      :name => 'Foo@Bar', :running => false,
+      :started_at => started_at, :ended_at => ended_at
+    }).save
+
+    activity.update({:running => true})
+    assert_nil activity.ended_at
+  end
 end

@@ -5,23 +5,20 @@ module Hourglass
     many_to_one :project
     many_to_many :tags
 
-    attr_writer :tag_names, :running, :started_at_mdy, :started_at_hm,
-      :ended_at_mdy, :ended_at_hm
-
     def_dataset_method(:full) { eager(:tags, :project) }
 
     subset(:current, :ended_at => nil)
-    def_dataset_method(:current_e) { current.full }
+    def_dataset_method(:current_e) { current.full.order(:started_at) }
 
     subset(:today) { started_at >= Date.today }
-    def_dataset_method(:today_e) { today.full }
+    def_dataset_method(:today_e) { today.full.order(:started_at) }
 
     subset(:week) do
       today = Date.today
       sunday = today - today.wday
       (started_at >= sunday) & (started_at < (sunday + 7))
     end
-    def_dataset_method(:week_e) { week.full }
+    def_dataset_method(:week_e) { week.full.order(:started_at) }
 
     subset(:sub_minute) do
       ended_at != nil &&
@@ -53,6 +50,11 @@ module Hourglass
       end
     end
 
+    def running=(value)
+      modified!
+      @running = value
+    end
+
     def started_at_date
       t = started_at
       Date.new(t.year, t.month, t.day)
@@ -62,16 +64,36 @@ module Hourglass
       started_at ? started_at.strftime("%m/%d/%Y") : ""
     end
 
+    def started_at_mdy=(value)
+      modified!
+      @started_at_mdy = value
+    end
+
     def started_at_hm
       started_at ? started_at.strftime("%H:%M") : ""
+    end
+
+    def started_at_hm=(value)
+      modified!
+      @started_at_hm = value
     end
 
     def ended_at_mdy
       ended_at ? ended_at.strftime("%m/%d/%Y") : ""
     end
 
+    def ended_at_mdy=(value)
+      modified!
+      @ended_at_mdy = value
+    end
+
     def ended_at_hm
       ended_at ? ended_at.strftime("%H:%M") : ""
+    end
+
+    def ended_at_hm=(value)
+      modified!
+      @ended_at_hm = value
     end
 
     def duration
@@ -110,6 +132,11 @@ module Hourglass
       else
         new? ? "" : tags_dataset.select_map(:name).join(", ")
       end
+    end
+
+    def tag_names=(value)
+      modified!
+      @tag_names = value
     end
 
     def name_with_project
@@ -160,6 +187,10 @@ module Hourglass
           project = Project.create(:name => project_name)
         end
         self.project = project
+      end
+
+      if @running
+        self.ended_at = nil
       end
     end
 

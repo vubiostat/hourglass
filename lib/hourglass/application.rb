@@ -32,6 +32,26 @@ module Hourglass
           })
         }
       end
+
+      def validate_and_save_activity(activity, was_running = false)
+        if activity.valid?
+          if !was_running && activity.running?
+            Activity.stop_current_activities
+          end
+          activity.save
+          if request.xhr?
+            all_partials.merge('activity' => activity).to_json
+          else
+            redirect '/'
+          end
+        else
+          if request.xhr?
+            'false'
+          else
+            erb :popup
+          end
+        end
+      end
     end
 
     before do
@@ -53,31 +73,35 @@ module Hourglass
 
     get '/activities/new' do
       @activity = Activity.new(:started_at => Time.now, :running => true)
-      erb :new
+      erb :popup
     end
 
     post '/activities' do
       @activity = Activity.new(params['activity'] || {})
       @activity.started_at ||= Time.now
-      if @activity.valid?
-        if @activity.running?
-          # TODO: This should be different if we're editing an already
-          # running activity.
-          Activity.stop_current_activities
-        end
-        @activity.save
-        if request.xhr?
-          all_partials.merge('activity' => @activity).to_json
-        else
-          redirect '/'
-        end
-      else
-        if request.xhr?
-          'false'
-        else
-          erb :new
-        end
-      end
+      validate_and_save_activity(@activity)
+    end
+
+    get '/activities/:id/edit' do
+      @activity = Activity[params[:id]]
+      erb :popup
+    end
+
+    post '/activities/:id' do
+      @activity = Activity[params[:id]]
+      was_running = @activity.running?
+      @activity.set_fields(params[:activity], [
+        :name, :tag_names, :running,
+        :started_at_mdy, :started_at_hm,
+        :ended_at_mdy, :ended_at_hm
+      ])
+      validate_and_save_activity(@activity, was_running)
+    end
+
+    get '/activities/:id/delete' do
+      activity = Activity[params[:id]]
+      activity.delete
+      all_partials.merge('activity' => activity).to_json
     end
 
     get '/activities' do

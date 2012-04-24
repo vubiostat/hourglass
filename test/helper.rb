@@ -10,6 +10,7 @@ end
 require 'test/unit'
 require 'rack/test'
 require 'mocha'
+require 'pp'
 
 ENV['HOURGLASS_ENV'] = 'test'
 ENV['HOURGLASS_HOME'] = File.expand_path(File.join(File.dirname(__FILE__), '..'))
