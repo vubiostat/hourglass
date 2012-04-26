@@ -2,6 +2,7 @@
 <form>
   <div id="activity-form" class="ui-widget ui-widget-content ui-corner-all" style="padding: 0.5em; font-size: 1em; white-space: nowrap;">
     <%= erb(:form, :locals => {:activity => @activity}) %>
+    <div class="ac-placeholder">&nbsp;</div>
   </div>
   <div class="right" style="margin: 0.5em 0";>
     <input id="save-button" type="submit" value="Save" />
@@ -11,8 +12,10 @@
 <script type="text/javascript">
   $(function() {
     var form = $('form');
-    var checkbox = $('#in-progress-checkbox');
 
+    $('#save-button, #cancel-button').button();
+
+    var checkbox = $('#in-progress-checkbox');
     checkbox.click(function(e) {
       if (checkbox.is(':checked')) {
         form.find('.activity-ended-at-time').attr('disabled', true);

@@ -210,5 +210,10 @@ module Hourglass
       @tag_names = @started_at_mdy = @started_at_hm = @ended_at_mdy =
         @ended_at_hm = @running = nil
     end
+
+    def before_destroy
+      super
+      remove_all_tags
+    end
   end
 end

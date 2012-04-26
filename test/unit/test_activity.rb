@@ -216,4 +216,9 @@ class TestActivity < Test::Unit::TestCase
     activity.update({:running => true})
     assert_nil activity.ended_at
   end
+
+  test "delete activity with tags" do
+    activity = new_activity(:tag_names => "foo, bar").save
+    activity.destroy
+  end
 end

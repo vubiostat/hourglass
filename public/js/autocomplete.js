@@ -68,15 +68,15 @@ $(function() {
 
       return false;
     }
-  }).data( "autocomplete" )._renderItem = function(ul, item) {
+  }).data("autocomplete")._renderItem = function(ul, item) {
     var str = item.activity_name;
     if (item.project_name) {
       str += "@" + item.project_name;
     }
     return $("<li></li>")
-    .data("item.autocomplete", item)
-    .append("<a>" + str + "</a>")
-    .appendTo(ul);
+      .data("item.autocomplete", item)
+      .append("<a>" + str + "</a>")
+      .appendTo(ul);
   };
 
   $('input.activity-tags')
@@ -120,4 +120,55 @@ $(function() {
         return false;
       }
     });
+
+  var times = []
+  for (var h = 0; h < 24; h++) {
+    if (h < 10) {
+      times.push('0'+h+':00', '0'+h+':15', '0'+h+':30', '0'+h+':45');
+    }
+    else {
+      times.push(h+':00', h+':15', h+':30', h+':45');
+    }
+  }
+  $('.activity-started-at-date, .activity-ended-at-date').datepicker();
+  var timeInputs = $('.activity-started-at-time, .activity-ended-at-time').autocomplete({
+    minLength: 0,
+    delay: 0,
+    source: function(request, response) {
+      response(times);
+      /* get the closest time and highlight it */
+      var parts = request.term.split(":");
+      if (parts[1]) {
+        var min;
+        if (parts[1].length == 1) {
+          min = parseInt(parts[1]) * 10;
+        }
+        else if (parts[1].substr(0, 1) == "0") {
+          min = parseInt(parts[1].substr(1, 1));
+        }
+        else {
+          min = parseInt(parts[1]);
+        }
+        min = Math.round(min / 15) * 15;
+
+        if (min == 0) {
+          parts[1] = '00';
+        }
+        else {
+          parts[1] = min;
+        }
+      }
+      else {
+        parts[1] = '00';
+      }
+      var target = parts.join(':');
+      var index = times.indexOf(target);
+      if (index >= 0) {
+        this.menu.activate(new $.Event('mouseover'),
+          this.menu.element.find('li:nth-child('+(index+1)+')'));
+      }
+    },
+  }).each(function() {
+    $(this).data('autocomplete').menu.element.addClass('activity-time');
+  });
 });

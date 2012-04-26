@@ -100,7 +100,7 @@ module Hourglass
 
     get '/activities/:id/delete' do
       activity = Activity[params[:id]]
-      activity.delete
+      activity.destroy
       all_partials.merge('activity' => activity).to_json
     end
 

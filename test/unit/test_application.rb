@@ -116,7 +116,7 @@ class TestApplication < Test::Unit::TestCase
   end
 
   test "delete activity" do
-    activity = Activity.create(:name => 'Foo@Bar', :started_at => Time.now - 12345, :running => true)
+    activity = Activity.create(:name => 'Foo@Bar', :tag_names => "foo, bar", :started_at => Time.now - 12345, :running => true)
     xhr "/activities/#{activity.id}/delete", :as => :get
     assert last_response.ok?, last_response.body
     assert_nil Activity[activity.id]
