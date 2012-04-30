@@ -109,20 +109,13 @@ module Hourglass
         select(:activities__name.as(:activity_name), :projects__name.as(:project_name)).
         left_join(:projects, :id => :project_id).
         order(:activities__name, :projects__name)
-
-      term = params['term']
-      if term && !term.empty?
-        md = term.match(/^([^@]+)(?:@(.+)?)?$/)
-        if md
-          ds = ds.filter(:activities__name.like("#{md[1]}%"))
-          if md[2]
-            ds = ds.filter(:projects__name.like("#{md[2]}%"))
-          end
+      ds.collect do |row|
+        if row[:project_name]
+          "#{row[:activity_name]}@#{row[:project_name]}"
         else
-          return("[]")
+          row[:activity_name]
         end
-      end
-      ds.all.to_json
+      end.to_json
     end
 
     get '/activities/current/stop' do
@@ -132,6 +125,10 @@ module Hourglass
 
     get '/tags' do
       Tag.naked.distinct.order(:name).select_map(:name).to_json
+    end
+
+    get '/projects' do
+      Project.naked.distinct.order(:name).select_map(:name).to_json
     end
   end
 end

@@ -164,6 +164,13 @@ table.times td.icons span.ui-icon-pencil {
 .ac-placeholder {
   height: 100px;
 }
+.ui-autocomplete-header {
+  font-weight: bold;
+  padding: 0.2em 0.4em;
+  margin-bottom: 0.2em;
+  line-height: 1.5;
+  border-bottom: 1px solid black;
+}
 
 input.ui-button, .ui-button-text-only .ui-button-text {
   padding: 0.2em;
@@ -180,3 +187,4 @@ input.ui-button, .ui-button-text-only {
   display: inline;
   white-space: nowrap;
 }
+

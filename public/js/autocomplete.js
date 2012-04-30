@@ -1,9 +1,8 @@
-var activities;
-var tags;
+var activities, tags, projects;
 
 function getActivities() {
   $.get('/activities', function(data) {
-    var d = new Dictionary('activity_name');
+    var d = new Dictionary();
     $.each(data, function(i, object) {
       d.add(object);
     });
@@ -20,64 +19,74 @@ function getTags() {
     tags = d;
   }, 'json');
 }
+
 function splitTags(val) {
   return val.split(/,\s*/);
 }
+
 function extractLastTag(term) {
   return splitTags(term).pop();
 }
 
+function getProjects() {
+  $.get('/projects', function(data) {
+    var d = new Dictionary();
+    $.each(data, function(i, name) {
+      d.add(name);
+    });
+    projects = d;
+  }, 'json');
+}
+
 $(function() {
-  getActivities();  // returns immediately
+  // these return immediately
+  getActivities();
   getTags();
+  getProjects();
 
   $('input.activity-name').autocomplete({
     minLength: 0,
     delay: 0,
     source: function(request, response) {
       var result = [];
-      if (activities != null) {
-        var values = activities.match(request.term);
-        if (values != null) {
-          result = values;
+      var parts = request.term.split('@');
+      if (parts.length == 2) {
+        if (projects != null) {
+          var values = projects.match(parts[1]);
+          if (values != null) {
+            result = values;
+          }
+        }
+      }
+      else {
+        if (activities != null) {
+          var values = activities.match(request.term);
+          if (values != null) {
+            result = values;
+          }
         }
       }
       response(result);
     },
     focus: function(event, ui) {
       var item = ui.item;
-      var activityName = $(event.target);
+      var obj = $(event.target);
+      var parts = obj.val().split('@');
 
-      var str = item.activity_name;
-      if (item.project_name) {
-        str += "@" + item.project_name;
+      if (parts.length == 2) {
+        /* autocomplete only the project */
+        obj.val(parts[0] + '@' + item.value);
       }
-      activityName.val(str);
+      else {
+        obj.val(item.value);
+      }
 
       return false;
     },
     select: function(event, ui) {
-      var item = ui.item;
-      var activityName = $(event.target);
-
-      var str = item.activity_name;
-      if (item.project_name) {
-        str += "@" + item.project_name;
-      }
-      activityName.val(str);
-
       return false;
     }
-  }).data("autocomplete")._renderItem = function(ul, item) {
-    var str = item.activity_name;
-    if (item.project_name) {
-      str += "@" + item.project_name;
-    }
-    return $("<li></li>")
-      .data("item.autocomplete", item)
-      .append("<a>" + str + "</a>")
-      .appendTo(ul);
-  };
+  });
 
   $('input.activity-tags')
     // don't navigate away from the field on tab when selecting an item
