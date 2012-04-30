@@ -83,7 +83,7 @@ module Hourglass
         if event.required
           display = @shell_wrapper.get_display
           location = display.get_cursor_location
-          popup_shell = ShellWrapper.new(display, Swt::SWT::APPLICATION_MODAL | Swt::SWT::TITLE | Swt::SWT::CLOSE, 'name' => 'popup', 'center' => location, 'default_size' => [650, 200])
+          popup_shell = ShellWrapper.new(display, Swt::SWT::APPLICATION_MODAL | Swt::SWT::TITLE | Swt::SWT::CLOSE | Swt::SWT::RESIZE, 'name' => 'popup', 'center' => location, 'default_size' => [675, 200])
           popup_browser = BrowserWrapper.new(popup_shell)
           event.browser = popup_browser.browser
         else

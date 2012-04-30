@@ -127,11 +127,17 @@ table.times td.icons span.ui-icon-pencil {
   margin-left: 0.7em;
 }
 
-#activity-dialog .activity-name,
-#activity-dialog .activity-tags {
+#activity-popup table {
+  width: 100%;
+}
+#activity-popup table td:nth-child(2) {
+}
+#activity-popup .activity-name,
+#activity-popup .activity-tags {
+  width: 100%;
 }
 
-.right {
+.right-align {
   text-align: right;
 }
 
@@ -168,4 +174,9 @@ input.ui-button, .ui-button-text-only {
 
 .ui-datepicker {
   font-size: 0.75em;
+}
+
+.no-wrap {
+  display: inline;
+  white-space: nowrap;
 }

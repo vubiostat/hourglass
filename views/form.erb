@@ -3,9 +3,12 @@
     <tr>
       <td>Time:</td>
       <td>
-        <input class="activity-started-at-date" type="text" name="activity[started_at_mdy]" value="<%= activity.started_at_mdy %>" size="10" maxlength="10" />
-        <input class="activity-started-at-time" type="text" name="activity[started_at_hm]" value="<%= activity.started_at_hm %>" size="5" maxlength="5" />
-        to
+        <div class="no-wrap">
+          <input class="activity-started-at-date" type="text" name="activity[started_at_mdy]" value="<%= activity.started_at_mdy %>" size="10" maxlength="10" />
+          <input class="activity-started-at-time" type="text" name="activity[started_at_hm]" value="<%= activity.started_at_hm %>" size="5" maxlength="5" />
+          to
+        </div>
+        <div class="no-wrap">
         <%- if activity.running? -%>
           <input class="activity-ended-at-time" type="text" name="activity[ended_at_hm]" value="<%= Time.now.strftime("%H:%M") %>" size="5" maxlength="5" disabled="disabled" />
           <input class="activity-ended-at-date" type="text" name="activity[ended_at_mdy]" value="<%= Time.now.strftime("%m/%d/%Y") %>" size="10" maxlength="10" disabled="disabled" />
@@ -13,17 +16,20 @@
           <input class="activity-ended-at-time" type="text" name="activity[ended_at_hm]" value="<%= activity.ended_at_hm %>" size="5" maxlength="5" />
           <input class="activity-ended-at-date" type="text" name="activity[ended_at_mdy]" value="<%= activity.ended_at_mdy %>" size="10" maxlength="10" />
         <%- end -%>
-        <input id="in-progress-checkbox" class="activity-running" type="checkbox" name="activity[running]" value="true" <%= 'checked="checked"' if activity.running? -%> />
-        <label for="in-progress-checkbox">in progress</label>
+        </div>
+        <div class="no-wrap">
+          <input id="in-progress-checkbox" class="activity-running" type="checkbox" name="activity[running]" value="true" <%= 'checked="checked"' if activity.running? -%> />
+          <label for="in-progress-checkbox">in progress</label>
+        </div>
       </td>
     </tr>
     <tr>
       <td>Activity:</td>
-      <td><input class="activity-name" type="text" name="activity[name_with_project]" value="<%= activity.name_with_project %>" style="width: 100%" /></td>
+      <td colspan="2"><input class="activity-name" type="text" name="activity[name_with_project]" value="<%= activity.name_with_project %>" /></td>
     </tr>
     <tr>
       <td>Tags:</td>
-      <td><input class="activity-tags" type="text" name="activity[tag_names]" value="<%= activity.tag_names %>" style="width: 100%" /></td>
+      <td colspan="2"><input class="activity-tags" type="text" name="activity[tag_names]" value="<%= activity.tag_names %>" /></td>
     </tr>
   </tbody>
 </table>

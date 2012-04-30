@@ -1,10 +1,10 @@
 <%- @title = @activity.new? ? "Add earlier activity" : "Edit activity" -%>
 <form>
-  <div id="activity-form" class="ui-widget ui-widget-content ui-corner-all" style="padding: 0.5em; font-size: 1em; white-space: nowrap;">
+  <div id="activity-popup" class="ui-widget ui-widget-content ui-corner-all" style="padding: 0.5em; font-size: 1em; overflow: auto;">
     <%= erb(:form, :locals => {:activity => @activity}) %>
     <div class="ac-placeholder">&nbsp;</div>
   </div>
-  <div class="right" style="margin: 0.5em 0";>
+  <div class="right-align" style="margin: 0.5em 0";>
     <input id="save-button" type="submit" value="Save" />
     <input id="cancel-button" type="button" value="Cancel" />
   </div>
@@ -30,9 +30,6 @@
     var submitUrl = "<%= @activity.new? ? "/activities" : "/activities/#{@activity.id}" %>";
     form.submit(function(e) {
       e.preventDefault();
-      if (checkbox.is(':checked')) {
-        //form.find('.ended-at-time').val('');
-      }
       $.post(submitUrl, form.serialize(), function(data, status) {
         if (data && !data.errors) {
           window.opener.updateUI(data);
