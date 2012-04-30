@@ -5,7 +5,7 @@ class TestActivity < Test::Unit::TestCase
 
   def new_activity(attribs = {})
     attribs = {
-      :name => 'Foo@Bar',
+      :name_with_project => 'Foo@Bar',
       :started_at => Time.now,
       :running => true
     }.merge(attribs)
@@ -43,8 +43,8 @@ class TestActivity < Test::Unit::TestCase
     assert_equal 2, Database[:activities_tags].filter(:activity_id => activity.id).count
   end
 
-  test "requires project name" do
-    activity = Activity.new(:name => nil)
+  test "requires name" do
+    activity = Activity.new(:name_with_project => nil)
     assert !activity.valid?, "Activity was valid when it shouldn't have been"
   end
 
@@ -181,23 +181,23 @@ class TestActivity < Test::Unit::TestCase
   end
 
   test "name_with_project" do
-    activity = new_activity(:name => 'Foo@Bar').save
+    activity = new_activity(:name_with_project => 'Foo@Bar').save
     assert_equal "Foo@Bar", activity.name_with_project
   end
 
   test "uniq" do
     now = Time.now
-    activity_1 = new_activity(:name => 'Foo@Bar', :started_at => now -  60, :ended_at => now      , :running => false).save
-    activity_2 = new_activity(:name => 'Foo@Bar', :started_at => now - 120, :ended_at => now -  60, :running => false).save
-    activity_3 = new_activity(:name => 'Foo@Baz', :started_at => now - 180, :ended_at => now - 120, :running => false).save
+    activity_1 = new_activity(:name_with_project => 'Foo@Bar', :started_at => now -  60, :ended_at => now      , :running => false).save
+    activity_2 = new_activity(:name_with_project => 'Foo@Bar', :started_at => now - 120, :ended_at => now -  60, :running => false).save
+    activity_3 = new_activity(:name_with_project => 'Foo@Baz', :started_at => now - 180, :ended_at => now - 120, :running => false).save
     assert_equal [activity_1, activity_3], Activity.uniq.all
   end
 
   test "uniq with pre-joined dataset" do
     now = Time.now
-    activity_1 = new_activity(:name => 'Foo@Bar', :started_at => now -  60, :ended_at => now      , :running => false).save
-    activity_2 = new_activity(:name => 'Foo@Bar', :started_at => now - 120, :ended_at => now -  60, :running => false).save
-    activity_3 = new_activity(:name => 'Foo@Baz', :started_at => now - 180, :ended_at => now - 120, :running => false).save
+    activity_1 = new_activity(:name_with_project => 'Foo@Bar', :started_at => now -  60, :ended_at => now      , :running => false).save
+    activity_2 = new_activity(:name_with_project => 'Foo@Bar', :started_at => now - 120, :ended_at => now -  60, :running => false).save
+    activity_3 = new_activity(:name_with_project => 'Foo@Baz', :started_at => now - 180, :ended_at => now - 120, :running => false).save
     actual =
       Activity.select(:activities.*).
       filter(:projects__name.like("Baz%")).
@@ -205,11 +205,26 @@ class TestActivity < Test::Unit::TestCase
     assert_equal [activity_3], actual
   end
 
+  test "update activity name" do
+    ended_at = Time.now
+    started_at = ended_at - 12345
+    activity = new_activity({
+      :name_with_project => 'Foo@Bar', :running => false,
+      :started_at => started_at, :ended_at => ended_at
+    }).save
+
+    activity.set(:name_with_project => "Bar@Baz")
+    assert activity.valid?
+    assert activity.save
+    assert_equal "Bar", activity.name
+    assert_equal "Baz", activity.project.name
+  end
+
   test "update finished activity to be running" do
     ended_at = Time.now
     started_at = ended_at - 12345
     activity = new_activity({
-      :name => 'Foo@Bar', :running => false,
+      :name_with_project => 'Foo@Bar', :running => false,
       :started_at => started_at, :ended_at => ended_at
     }).save
 

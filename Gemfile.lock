@@ -16,9 +16,9 @@ GEM
       git (>= 1.2.5)
       rake
       rdoc
-    json (1.6.6-java)
+    json (1.7.0-java)
     metaclass (0.0.1)
-    mocha (0.10.5)
+    mocha (0.11.3)
       metaclass (~> 0.0.1)
     mongrel (1.1.5-java)
       gem_plugin (>= 0.2.3)

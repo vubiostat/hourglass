@@ -34,7 +34,7 @@
         //form.find('.ended-at-time').val('');
       }
       $.post(submitUrl, form.serialize(), function(data, status) {
-        if (data) {
+        if (data && !data.errors) {
           window.opener.updateUI(data);
           window.close();
         }

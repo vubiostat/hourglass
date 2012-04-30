@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "hourglass"
   gem.homepage = "http://github.com/viking/hourglass"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Simple GUI for tracking time spent on activities}
+  gem.description = %Q{Hourglass is a simple GUI application for tracking time spent on activities.}
   gem.email = "jeremy.f.stephens@vanderbilt.edu"
   gem.authors = ["Jeremy Stephens"]
   # dependencies defined in Gemfile
@@ -106,3 +106,5 @@ namespace :run do
     load File.join(File.dirname(__FILE__), 'bin', 'hourglass')
   end
 end
+
+task :build => :gemspec

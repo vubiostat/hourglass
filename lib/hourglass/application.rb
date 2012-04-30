@@ -46,7 +46,7 @@ module Hourglass
           end
         else
           if request.xhr?
-            'false'
+            {'errors' => activity.errors}.to_json
           else
             erb :popup
           end
@@ -91,7 +91,7 @@ module Hourglass
       @activity = Activity[params[:id]]
       was_running = @activity.running?
       @activity.set_fields(params[:activity], [
-        :name, :tag_names, :running,
+        :name_with_project, :tag_names, :running,
         :started_at_mdy, :started_at_hm,
         :ended_at_mdy, :ended_at_hm
       ])

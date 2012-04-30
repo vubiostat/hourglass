@@ -69,12 +69,12 @@ $(function() {
     var name = form.find('.activity-name');
     var tags = form.find('.activity-tags');
     var data = {
-      'activity[name]': (name.hasClass('empty') ? "" : name.val()),
+      'activity[name_with_project]': (name.hasClass('empty') ? "" : name.val()),
       'activity[tag_names]': (tags.hasClass('empty') ? "" : tags.val()),
       'activity[running]': 'true'
     };
     $.post('/activities', data, function(data, status) {
-      if (data) {
+      if (data && !data.errors) {
         updateUI(data);
         form.find('.activity-name').val('').blur();
         form.find('.activity-tags').val('').blur();

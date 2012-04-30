@@ -25,7 +25,7 @@ class TestApplication < Test::Unit::TestCase
   end
 
   test "creating activity via ajax" do
-    data = { 'name' => 'Foo@Bar', 'tag_names' => 'hey, buddy', 'running' => '1' }
+    data = { 'name_with_project' => 'Foo@Bar', 'tag_names' => 'hey, buddy', 'running' => '1' }
     count = Activity.count
     xhr "/activities", 'activity' => data
     assert last_response.ok?, last_response.body
@@ -40,7 +40,7 @@ class TestApplication < Test::Unit::TestCase
   end
 
   test "creating activity via ajax stops other activities" do
-    activity_1 = Activity.create(:name => 'Junk@Baz', :started_at => Time.now - 12345, :running => true)
+    activity_1 = Activity.create(:name_with_project => 'Junk@Baz', :started_at => Time.now - 12345, :running => true)
 
     data = { 'name' => 'Foo@Bar', 'tag_names' => 'hey, buddy', 'running' => '1' }
     count = Activity.count
@@ -53,18 +53,18 @@ class TestApplication < Test::Unit::TestCase
   end
 
   test "edit activity form" do
-    activity = Activity.create(:name => 'Foo@Bar', :tag_names => 'hey, buddy', :started_at => Time.now - 12345, :running => true)
+    activity = Activity.create(:name_with_project => 'Foo@Bar', :tag_names => 'hey, buddy', :started_at => Time.now - 12345, :running => true)
     get "/activities/#{activity.id}/edit"
     assert last_response.ok?, last_response.body
   end
 
   test "updating activity" do
     started_at = Time.now - 12345
-    activity = Activity.create(:name => 'Foo@Bar', :tag_names => 'hey, buddy', :started_at => started_at, :running => true)
+    activity = Activity.create(:name_with_project => 'Foo@Bar', :tag_names => 'hey, buddy', :started_at => started_at, :running => true)
 
     ended_at = Time.now
     data = {
-      'name' => 'Foo@Baz',
+      'name_with_project' => 'Foo@Baz',
       'tag_names' => 'hey, buddy',
       'started_at_mdy' => activity.started_at_mdy,
       'started_at_hm' => activity.started_at_hm,
@@ -83,10 +83,10 @@ class TestApplication < Test::Unit::TestCase
     today = Time.now
     yesterday = today - day
 
-    activity_1 = Activity.create(:name => 'Foo@Bar', :started_at => today, :running => true)
-    activity_2 = Activity.create(:name => 'Baz@Blargh', :started_at => yesterday - 60, :ended_at => yesterday)
-    activity_3 = Activity.create(:name => 'Foo@Bar', :started_at => yesterday - 120, :ended_at => yesterday - 60)
-    activity_4 = Activity.create(:name => 'Blah@Junk', :started_at => yesterday - 180, :ended_at => yesterday - 120)
+    activity_1 = Activity.create(:name_with_project => 'Foo@Bar', :started_at => today, :running => true)
+    activity_2 = Activity.create(:name_with_project => 'Baz@Blargh', :started_at => yesterday - 60, :ended_at => yesterday)
+    activity_3 = Activity.create(:name_with_project => 'Foo@Bar', :started_at => yesterday - 120, :ended_at => yesterday - 60)
+    activity_4 = Activity.create(:name_with_project => 'Blah@Junk', :started_at => yesterday - 180, :ended_at => yesterday - 120)
     get "/activities"
     assert last_response.ok?, "Response wasn't okay"
 
@@ -108,7 +108,7 @@ class TestApplication < Test::Unit::TestCase
   end
 
   test "stop current activities" do
-    activity = Activity.create(:name => 'Foo@Bar', :started_at => Time.now - 12345, :running => true)
+    activity = Activity.create(:name_with_project => 'Foo@Bar', :started_at => Time.now - 12345, :running => true)
     xhr "/activities/current/stop", :as => :get
     assert last_response.ok?, last_response.body
     activity.reload
@@ -116,7 +116,7 @@ class TestApplication < Test::Unit::TestCase
   end
 
   test "delete activity" do
-    activity = Activity.create(:name => 'Foo@Bar', :tag_names => "foo, bar", :started_at => Time.now - 12345, :running => true)
+    activity = Activity.create(:name_with_project => 'Foo@Bar', :tag_names => "foo, bar", :started_at => Time.now - 12345, :running => true)
     xhr "/activities/#{activity.id}/delete", :as => :get
     assert last_response.ok?, last_response.body
     assert_nil Activity[activity.id]

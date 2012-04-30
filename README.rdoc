@@ -1,6 +1,6 @@
 = hourglass
 
-Description goes here.
+Simple GUI for tracking time spent on activities.
 
 == Contributing to hourglass
  
