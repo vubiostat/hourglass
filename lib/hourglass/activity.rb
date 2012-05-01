@@ -6,6 +6,7 @@ module Hourglass
     plugin :json_serializer, :naked => true, :include => [:tags, :project]
     plugin :nested_attributes
     nested_attributes :project
+    plugin :dirty
 
     def_dataset_method(:full) { eager(:tags, :project) }
 
@@ -163,6 +164,10 @@ module Hourglass
       end
     end
 
+    def changes
+      @changes || {}
+    end
+
     private
 
     def before_validation
@@ -193,14 +198,52 @@ module Hourglass
     end
 
     def before_save
+      @changes = {}
+
+      if project && project.new?
+        @changes['new_project'] = project.name
+      end
+
       super
+
       if @running
         self.ended_at = nil
+      end
+
+      if Activity.filter(:name => name, :project_id => project_id).count == 0
+        @changes['new_activity'] = name_with_project
+      end
+
+      if !new?
+        name_changed = changed_columns.include?(:name)
+        project_changed =
+          changed_columns.include?(:project_id) ||
+          (project && project.id != project_id)
+
+        if name_changed || project_changed
+          # check to see if this was the last activity named this
+          previous_name = initial_value(:name)
+          previous_project_id = initial_value(:project_id)
+          ds = Activity.
+            filter(:name => previous_name).
+            filter(:project_id => previous_project_id).
+            filter(~{:id => id})
+
+          if ds.count == 0
+            @changes['delete_activity'] =
+              if previous_project_id
+                previous_name + "@" + Project[previous_project_id].name
+              else
+                previous_name
+              end
+          end
+        end
       end
     end
 
     def after_save
       super
+      new_tags = []
       if !@tag_names.nil? && !@tag_names.empty?
         remove_all_tags
         tag_names.split(/,\s*/).each do |tag_name|
@@ -208,10 +251,15 @@ module Hourglass
           tag = Tag.filter(:name => tag_name).first
           if tag.nil?
             tag = Tag.create(:name => tag_name)
+            new_tags << tag_name
           end
           add_tag(tag)
         end
       end
+      if !new_tags.empty?
+        @changes['new_tags'] = new_tags
+      end
+
       @tag_names = @started_at_mdy = @started_at_hm = @ended_at_mdy =
         @ended_at_hm = @running = nil
     end
@@ -219,6 +267,20 @@ module Hourglass
     def before_destroy
       super
       remove_all_tags
+
+      @changes = {}
+    end
+
+    def after_destroy
+      super
+
+      # NOTE: this doesn't work if someone changes an activity, then
+      # deletes it without saving, but this isn't really that critical.
+      if Activity.filter(:name => name, :project_id => project_id).count == 0
+        @changes['delete_activity'] = name_with_project
+      end
+
+      # TODO: Project.prune
     end
   end
 end

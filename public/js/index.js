@@ -20,6 +20,27 @@ function updateUI(data) {
   $('.stop-tracking').button().find('span').width(buttonWidth);
   $('#today-tab').html(data.today);
   $('#week-tab').html(data.week);
+
+  if (typeof(activities) == "object") {
+    /* add autocomplete stuff */
+    if (data.changes) {
+      var c = data.changes;
+      if (c.new_activity) {
+        activities.add(c.new_activity);
+      }
+      if (c.new_project) {
+        projects.add(c.new_project);
+      }
+      if (c.new_tags) {
+        $.each(c.new_tags, function() {
+          tags.add(this);
+        });
+      }
+      if (c.delete_activity) {
+        activities.remove(c.delete_activity);
+      }
+    }
+  }
 }
 function millisecondsToWords(num) {
   var total_minutes = Math.floor(num / 60000);
@@ -179,10 +200,10 @@ $(function() {
         $.get("/activities/" + activityId + "/delete", function(data) {
           updateUI(data);
         }, 'json');
-        obj.dialog( "close" );
+        obj.dialog("close");
       },
       Cancel: function() {
-        $(this).dialog( "close" );
+        $(this).dialog("close");
       }
     }
   });

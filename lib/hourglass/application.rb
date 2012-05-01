@@ -40,7 +40,7 @@ module Hourglass
           end
           activity.save
           if request.xhr?
-            all_partials.merge('activity' => activity).to_json
+            all_partials.merge('changes' => activity.changes).to_json
           else
             redirect '/'
           end
@@ -101,7 +101,7 @@ module Hourglass
     get '/activities/:id/delete' do
       activity = Activity[params[:id]]
       activity.destroy
-      all_partials.merge('activity' => activity).to_json
+      all_partials.merge('changes' => activity.changes).to_json
     end
 
     get '/activities' do

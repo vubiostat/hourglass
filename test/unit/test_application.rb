@@ -32,8 +32,10 @@ class TestApplication < Test::Unit::TestCase
     assert_equal count + 1, Activity.count
 
     result = JSON.parse(last_response.body)
-    assert_equal "Foo", result['activity']['name']
-    assert_equal "Bar", result['activity']['project']['name']
+    assert result.has_key?('changes')
+    assert_equal 'Foo@Bar', result['changes']['new_activity']
+    assert_equal 'Bar', result['changes']['new_project']
+    assert_equal %w{hey buddy}, result['changes']['new_tags']
     assert result.has_key?('today')
     assert result.has_key?('week')
     assert result.has_key?('current')
@@ -90,13 +92,9 @@ class TestApplication < Test::Unit::TestCase
     get "/activities"
     assert last_response.ok?, "Response wasn't okay"
 
-    expected = [
-      {'activity_name' => 'Baz', 'project_name' => 'Blargh'},
-      {'activity_name' => 'Blah', 'project_name' => 'Junk'},
-      {'activity_name' => 'Foo', 'project_name' => 'Bar'}
-    ]
+    expected = %w{Baz@Blargh Blah@Junk Foo@Bar}
     result = JSON.parse(last_response.body)
-    assert_equal expected, result.collect { |x| Hash[x.select { |k, v| k == 'activity_name' || k == 'project_name' }] }
+    assert_equal expected, result
   end
 
   test "fetching tags" do
@@ -120,5 +118,9 @@ class TestApplication < Test::Unit::TestCase
     xhr "/activities/#{activity.id}/delete", :as => :get
     assert last_response.ok?, last_response.body
     assert_nil Activity[activity.id]
+
+    result = JSON.parse(last_response.body)
+    assert result.has_key?('changes')
+    assert_equal 'Foo@Bar', result['changes']['delete_activity']
   end
 end

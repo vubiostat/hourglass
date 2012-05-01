@@ -86,7 +86,8 @@ class TestActivity < Test::Unit::TestCase
   test "stop_current_activities" do
     activity_1 = new_activity(:started_at => Time.now - 12345).save
     Activity.stop_current_activities
-    assert_not_nil activity_1.refresh.ended_at
+    activity_1.refresh
+    assert_not_nil activity_1.ended_at
 
     activity_2 = new_activity(:started_at => Time.now - 30).save
     Activity.stop_current_activities
@@ -235,5 +236,52 @@ class TestActivity < Test::Unit::TestCase
   test "delete activity with tags" do
     activity = new_activity(:tag_names => "foo, bar").save
     activity.destroy
+  end
+
+  test "#changes when creating activity with all new unique things" do
+    activity = new_activity(:tag_names => "foo, bar").save
+    expected = {
+      'new_activity' => 'Foo@Bar',
+      'new_project' => 'Bar',
+      'new_tags' => %w{foo bar}
+    }
+    assert_equal expected, activity.changes
+  end
+
+  test "#changes when creating activity with existing things" do
+    now = Time.now
+    activity_1 = new_activity({
+      :tag_names => "foo, bar", :running => false,
+      :started_at => now - 12345, :ended_at => now
+    }).save
+    activity_2 = new_activity(:tag_names => "foo, bar, baz").save
+
+    expected = {
+      'new_tags' => %w{baz}
+    }
+    assert_equal expected, activity_2.changes
+  end
+
+  test "#changes when updating activity" do
+    activity = new_activity(:tag_names => "foo, bar").save
+    activity.update(:name_with_project => 'Foo@Baz')
+    expected = {
+      'new_activity' => 'Foo@Baz',
+      'new_project' => 'Baz',
+      'delete_activity' => 'Foo@Bar'
+    }
+    assert_equal expected, activity.changes
+  end
+
+  test "#changes when deleting activity" do
+    now = Time.now
+    activity_1 = new_activity(:running => false, :started_at => now - 12345, :ended_at => now - 1234).save
+    activity_2 = new_activity(:running => false, :started_at => now - 1234, :ended_at => now - 123).save
+
+    activity_1.destroy
+    assert_equal({}, activity_1.changes)
+
+    activity_2.destroy
+    assert_equal({"delete_activity" => "Foo@Bar"}, activity_2.changes)
   end
 end
