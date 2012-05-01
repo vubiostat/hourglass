@@ -15,12 +15,13 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "hourglass"
-  gem.homepage = "http://github.com/viking/hourglass"
+  gem.homepage = "http://github.com/vubiostat/hourglass"
   gem.license = "MIT"
   gem.summary = %Q{Simple GUI for tracking time spent on activities}
   gem.description = %Q{Hourglass is a simple GUI application for tracking time spent on activities.}
   gem.email = "jeremy.f.stephens@vanderbilt.edu"
   gem.authors = ["Jeremy Stephens"]
+  gem.platform = 'java'
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
