@@ -68,7 +68,7 @@ module Hourglass
 
       def initialize(shell_wrapper)
         @shell_wrapper = shell_wrapper
-        @browser = Swt::Browser.new(shell_wrapper.shell, Swt::SWT::WEBKIT)
+        @browser = Swt::Browser.new(shell_wrapper.shell, Swt::SWT::NONE)
         @browser.add_open_window_listener(self)
         @browser.add_close_window_listener(self)
         @browser.add_visibility_window_listener(self)
