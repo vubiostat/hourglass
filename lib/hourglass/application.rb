@@ -8,6 +8,9 @@ module Hourglass
     end
 
     helpers do
+      include Rack::Utils
+      alias_method :h, :escape_html
+
       def activity_tags(activity)
         result = "<ul>"
         activity.tags.each do |tag|
@@ -17,10 +20,11 @@ module Hourglass
       end
 
       def all_partials
+        today = Activity.today_e.all
         {
           'today' => erb(:_today, {
             :layout => false,
-            :locals => {:activities => Activity.today_e.all}
+            :locals => {:activities => today}
           }),
           'week' => erb(:_week, {
             :layout => false,
@@ -29,6 +33,10 @@ module Hourglass
           'current' => erb(:_current, {
             :layout => false,
             :locals => {:activity => Activity.current_e.first}
+          }),
+          'totals' => erb(:_totals, {
+            :layout => false,
+            :locals => {:activities => today}
           })
         }
       end
@@ -51,6 +59,14 @@ module Hourglass
             erb :popup
           end
         end
+      end
+
+      def project_totals(activities)
+        projects = Hash.new { |h, k| h[k] = 0 }
+        activities.each do |activity|
+          projects[activity.project] += activity.duration
+        end
+        projects
       end
     end
 

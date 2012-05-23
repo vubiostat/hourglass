@@ -20,6 +20,7 @@ function updateUI(data) {
   $('.stop-tracking').button().find('span').width(buttonWidth);
   $('#today-tab').html(data.today);
   $('#week-tab').html(data.week);
+  $('#totals').html(data.totals);
   $('tr.activity td').disableSelection();
 
   if (typeof(activities) == "object") {
@@ -68,7 +69,9 @@ function millisecondsToWords(num) {
   return(strings.join(" "));
 }
 function updateCurrent() {
+  // TODO: Update project totals
   var now = new Date();
+  var activities = {}
   $('.activity-duration.activity-running').each(function() {
     var obj = $(this);
     var startedAt = obj.data('startedAt');

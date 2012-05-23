@@ -194,3 +194,20 @@ input.ui-button, .ui-button-text-only {
   white-space: nowrap;
 }
 
+#totals {
+  float: left;
+  overflow: auto;
+}
+#totals ul {
+  margin: 0;
+  padding: 0;
+}
+#totals ul li {
+  margin: 0;
+  display: inline;
+  line-height: 2em;
+}
+
+#add-earlier-activity {
+  float: right;
+}

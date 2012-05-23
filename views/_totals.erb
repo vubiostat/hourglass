@@ -1,0 +1,8 @@
+<ul>
+<% totals = project_totals(activities); totals.each_with_index do |(project, duration), i| %>
+  <li class="project project-<%= project ? project.id : 'none' %>">
+    <%= project ? project.name : 'Unsorted' %>:
+    <span class="duration"><%= "%3.2f" % (duration / 3600.0) %></span>h<%= "," unless (i + 1) == totals.length %>
+  </li>
+<% end %>
+</ul>

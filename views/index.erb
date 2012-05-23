@@ -28,8 +28,10 @@
     <%= erb(:_week, :locals => {:activities => @activities['week']}) %>
   </div>
 </div>
-<div class="right-align" style="margin: 0.5em 0";>
+<div style="margin: 0.5em 0";>
+  <div id="totals"><%= erb(:_totals, :locals => {:activities => @activities['today']}) %></div>
   <button id="add-earlier-activity">Add earlier activity</button>
+  <div class="clear"></div>
 </div>
 
 <div id="confirmation-dialog" style="display: none;">
