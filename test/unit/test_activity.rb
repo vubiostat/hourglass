@@ -284,4 +284,36 @@ class TestActivity < Test::Unit::TestCase
     activity_2.destroy
     assert_equal({"delete_activity" => "Foo@Bar"}, activity_2.changes)
   end
+
+  test "start_like starts activity like existing activity" do
+    now = Time.now
+    activity_1 = new_activity(:running => false, :started_at => now - 12345, :ended_at => now - 1234, :tag_names => "foo, bar").save
+    activity_2 = Activity.start_like(activity_1)
+    assert_equal activity_1.name_with_project, activity_2.name_with_project
+    assert_equal activity_1.tag_names, activity_2.tag_names
+  end
+
+  test "start_like doesn't start already running activity" do
+    activity_1 = new_activity.save
+    activity_2 = Activity.start_like(activity_1)
+    assert !activity_2
+    assert_equal 1, Activity.current.count
+  end
+
+  test "start_like doesn't start identical activity" do
+    now = Time.now
+    activity_1 = new_activity(:running => false, :started_at => now - 12345, :ended_at => now - 1234, :tag_names => "foo, bar").save
+    activity_2 = Activity.start_like(activity_1)
+    activity_3 = Activity.start_like(activity_1)
+    assert !activity_3
+    assert_equal 1, Activity.current.count
+  end
+
+  test "start_like stops current activities" do
+    now = Time.now
+    activity_1 = new_activity(:name_with_project => 'Foo@Bar', :running => false, :started_at => now - 12345, :ended_at => now - 1234, :tag_names => "foo, bar").save
+    activity_2 = new_activity(:name_with_project => 'Bar@Baz').save
+    activity_3 = Activity.start_like(activity_1)
+    assert_equal 1, Activity.current.count
+  end
 end

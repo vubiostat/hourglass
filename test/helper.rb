@@ -19,6 +19,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'hourglass'
 
+Hourglass::Database.migrate!
 Hourglass::Application.set :raise_errors, true
 
 class Test::Unit::TestCase

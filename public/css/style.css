@@ -87,13 +87,20 @@ table.times {
   margin: 0;
   padding: 0;
   width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 table.times tr {
   position: relative;
+  cursor: pointer;
+}
+table.times tr.selected td {
+  background-color: #eee;
 }
 table.times td {
   padding: 0.2em 0;
   white-space: nowrap;
+  cursor: pointer;
 }
 table.times td.activity-started-at {
   padding-right: 0.3em;
@@ -105,7 +112,6 @@ table.times td.time-separator {
 }
 table.times td.activity-name {
   padding: 0 0.3em 0 1em;
-  cursor: pointer;
 }
 table.times td.project-name {
   color: #b8b8b8;

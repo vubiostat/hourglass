@@ -53,6 +53,30 @@ module Hourglass
       end
     end
 
+    def self.start_like(activity)
+      current_activity = Activity.current.first
+      if current_activity.nil? || (current_activity.pk != activity.pk && !activity.similar_to(current_activity))
+        Activity.stop_current_activities
+
+        values = activity.values.dup
+        values.delete_if { |k, v| k == :id || k == :ended_at }
+        values.update({
+          :started_at => Time.now, :running => true,
+          :tag_names => activity.tag_names
+        })
+        new_activity = new(values)
+        new_activity.save
+      else
+        false
+      end
+    end
+
+    def similar_to(activity)
+      activity.is_a?(Activity) &&
+        activity.name_with_project == self.name_with_project &&
+        activity.tag_names == self.tag_names
+    end
+
     def running=(value)
       modified!
       @running = value

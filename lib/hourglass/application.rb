@@ -104,6 +104,16 @@ module Hourglass
       all_partials.merge('changes' => activity.changes).to_json
     end
 
+    post '/activities/:id/restart' do
+      activity = Activity[params[:id]]
+      new_activity = Activity.start_like(activity)
+      if new_activity
+        all_partials.merge("success" => true).to_json
+      else
+        {"success" => false}.to_json
+      end
+    end
+
     get '/activities' do
       ds = Activity.naked.distinct.
         select(:activities__name.as(:activity_name), :projects__name.as(:project_name)).

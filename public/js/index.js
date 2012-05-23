@@ -20,6 +20,7 @@ function updateUI(data) {
   $('.stop-tracking').button().find('span').width(buttonWidth);
   $('#today-tab').html(data.today);
   $('#week-tab').html(data.week);
+  $('tr.activity td').disableSelection();
 
   if (typeof(activities) == "object") {
     /* add autocomplete stuff */
@@ -211,7 +212,28 @@ $(function() {
   $('.activity .ui-icon-trash').live('click', function(e) {
     var icon = $(this);
     var activityId = icon.closest('.activity').attr('class').match(/activity-(\d+)/)[1];
-    confirmationDialog.data('activityId', activityId).dialog('open'); });
+    confirmationDialog.data('activityId', activityId).dialog('open');
+  });
+
+  var activityClickedAt;
+  $('tr.activity td:not(.icons)').live('dblclick', function(e) {
+    var col = $(this);
+    var activityId = col.closest('.activity').attr('class').match(/activity-(\d+)/)[1];
+    $.post('/activities/'+activityId+'/restart', function(data) {
+      if (data.success) {
+        updateUI(data);
+      }
+    }, 'json');
+  }).live('click', function(e) {
+    var now = new Date;
+    if (!activityClickedAt || (now - activityClickedAt > 300)) {
+      var col = $(this);
+      var row = col.closest('.activity');
+      row.siblings().removeClass('selected');
+      row.toggleClass('selected');
+      activityClickedAt = now;
+    }
+  });
 
   var updateInterval = setInterval(updateCurrent, 60000);
 });

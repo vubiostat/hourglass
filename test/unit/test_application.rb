@@ -123,4 +123,26 @@ class TestApplication < Test::Unit::TestCase
     assert result.has_key?('changes')
     assert_equal 'Foo@Bar', result['changes']['delete_activity']
   end
+
+  test "restart activity" do
+    activity = Activity.create(:name_with_project => 'Foo@Bar', :tag_names => "foo, bar", :started_at => Time.now - 12345, :ended_at => Time.now, :running => false)
+    count = Activity.count
+    xhr "/activities/#{activity.id}/restart"
+    assert last_response.ok?, last_response.body
+    assert_equal count + 1, Activity.count
+
+    result = JSON.parse(last_response.body)
+    assert result["success"]
+  end
+
+  test "restarting running activity" do
+    activity = Activity.create(:name_with_project => 'Foo@Bar', :tag_names => "foo, bar", :started_at => Time.now - 12345, :running => true)
+    count = Activity.count
+    xhr "/activities/#{activity.id}/restart"
+    assert last_response.ok?
+    assert_equal count, Activity.count
+
+    result = JSON.parse(last_response.body)
+    assert !result["success"]
+  end
 end
