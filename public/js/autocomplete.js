@@ -70,12 +70,13 @@ $(function() {
     },
     focus: function(event, ui) {
       var item = ui.item;
+      var itemParts = item.value.split('@');
       var obj = $(event.target);
-      var parts = obj.val().split('@');
+      var objParts = obj.val().split('@');
 
-      if (parts.length == 2) {
+      if (objParts.length == 2 && itemParts.length == 1) {
         /* autocomplete only the project */
-        obj.val(parts[0] + '@' + item.value);
+        obj.val(objParts[0] + '@' + item.value);
       }
       else {
         obj.val(item.value);
@@ -86,6 +87,11 @@ $(function() {
     select: function(event, ui) {
       return false;
     }
+  });
+
+  $('#select-activity').click(function(e) {
+    $('input.activity-name').focus().autocomplete('search', '');
+    e.preventDefault();
   });
 
   $('input.activity-tags')

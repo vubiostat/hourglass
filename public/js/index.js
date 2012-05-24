@@ -186,9 +186,16 @@ $(function() {
   });
   resizeUI();
 
-  $('button').button();
+  $('#add-earlier-activity, .start-tracking, .stop-tracking').button();
   buttonWidth = $('.start-tracking span').width();
   $('.stop-tracking span').width(buttonWidth);
+
+  $('#select-activity').button({
+    icons: {
+      primary: "ui-icon-triangle-1-s"
+    },
+    text: false,
+  });
 
   $('.activity .ui-icon-pencil').live('click', function(e) {
     var icon = $(this);

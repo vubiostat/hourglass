@@ -211,3 +211,8 @@ input.ui-button, .ui-button-text-only {
 #add-earlier-activity {
   float: right;
 }
+
+#select-activity {
+  width: 1.4em;
+  height: 1.4em;
+}
