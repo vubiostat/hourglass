@@ -69,9 +69,9 @@ function millisecondsToWords(num) {
   return(strings.join(" "));
 }
 function updateCurrent() {
-  // TODO: Update project totals
+  updateTotals();
+
   var now = new Date();
-  var activities = {}
   $('.activity-duration.activity-running').each(function() {
     var obj = $(this);
     var startedAt = obj.data('startedAt');
@@ -82,6 +82,9 @@ function updateCurrent() {
     var diff = now - startedAt;
     obj.html(millisecondsToWords(diff));
   });
+}
+function updateTotals() {
+  $('#totals').load('/totals');
 }
 
 $(function() {

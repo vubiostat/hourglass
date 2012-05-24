@@ -1,6 +1,6 @@
   <table>
-    <tr>
     <%- if activity -%>
+    <tr class="activity activity-<%= activity.id %>">
       <td class="activity-name"><%= activity.name %></td>
       <td class="activity-tags"><%= activity_tags(activity) %></td>
       <td class="activity-duration activity-running" title="<%= activity.started_at.iso8601 %>"><%= activity.duration_in_words %></td>
@@ -8,6 +8,7 @@
         <button class="stop-tracking">Stop tracking</button>
       </td>
     <%- else -%>
+    <tr>
       <td class="activity-name">No activity</td>
       <td class="activity-tags">&nbsp;</td>
       <td class="activity-duration">&nbsp;</td>

@@ -156,5 +156,13 @@ module Hourglass
     get '/projects' do
       Project.naked.distinct.order(:name).select_map(:name).to_json
     end
+
+    get '/totals' do
+      today = Activity.today_e.all
+      erb(:_totals, {
+        :layout => false,
+        :locals => {:activities => today}
+      })
+    end
   end
 end
